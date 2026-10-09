@@ -136,7 +136,7 @@ export function answer(question: string): Reply {
   if (/processing time|how long|exact.*processing|processing.*timeline|exact.*timeline|how many days/.test(q)) {
     return {
       kind: "fallback",
-      text: "No verified application processing timeline is available in this demo. Please contact the bank's authorized representative.",
+      text: "No verified application processing timeline is available in this demo, and the exact processing time is not available. Please contact the bank's authorized representative.",
       source: "KB-06",
     };
   }
