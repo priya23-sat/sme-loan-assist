@@ -193,7 +193,7 @@ export function answer(question: string): Reply {
     };
   }
 
-  if (/what.*still missing|which.*missing|what.*pending|pending.*pan|pan.*pending|pending.*document/.test(q)) {
+  if (/what.*still missing|which.*missing|what.*pending(?!.*mean)|pending.*pan|pan.*pending|pending.*document/.test(q)) {
     return {
       kind: "grounded",
       text: "Open the Document Checklist page to see the current demo items marked Pending. If a specific item such as PAN is pending, you can use 'Mark as submitted' to update the prototype only. This does not submit a document to a real bank.",
