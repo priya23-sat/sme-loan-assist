@@ -59,6 +59,24 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-tint: var(--tint);
+}
+
+:root {
+  --success: oklch(0.48 0.1 185);
+  --success-soft: oklch(0.95 0.04 185);
+  --warning: oklch(0.5 0.12 65);
+  --warning-soft: oklch(0.96 0.06 85);
+  --tint: oklch(0.96 0.02 255);
+  --gradient-hero: linear-gradient(135deg, oklch(0.3 0.1 262), oklch(0.42 0.11 230) 60%, oklch(0.5 0.1 190));
+}
+
+@utility bg-hero {
+  background-image: var(--gradient-hero);
 }
 
 :root {
