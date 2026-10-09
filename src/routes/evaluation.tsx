@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Card } from "@/components/shell";
 import { EVAL_CASES, evaluateCase } from "@/lib/kb";
 
@@ -28,10 +28,7 @@ function Metric({ label, value }: { label: string; value: string | number }) {
 
 function Evaluation() {
   const [ran, setRan] = useState(false);
-  const results = useMemo(
-    () => EVAL_CASES.map((testCase) => ({ testCase, ...evaluateCase(testCase) })),
-    [ran],
-  );
+  const results = EVAL_CASES.map((testCase) => ({ testCase, ...evaluateCase(testCase) }));
   const passed = results.filter((r) => r.result === "PASS").length;
   const failed = results.filter((r) => r.result === "FAIL").length;
   const needsReview = results.filter((r) => r.result === "NEEDS REVIEW").length;
