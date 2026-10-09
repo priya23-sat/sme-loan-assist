@@ -80,7 +80,7 @@ const hasSensitiveIdentifier = (q: string) =>
   /\b(?:account|a\/c|bank account)\D{0,12}\d{9,18}\b/i.test(q);
 
 const hasApprovalGuaranteeIntent = (q: string) =>
-  /guarantee|guaranteed|definitely get|sure to get|will i get|approval chance|approve my loan|loan be approved|application approved|is my application approved|sanction my loan|guarantee.*approval|approval.*guarantee/.test(q);
+  /guarantee|guaranteed|definitely get|sure to get|will i get|approval chance|approve my loan|loan be approved|application approved|is my application approved|confirm.*application.*approved|application is approved|sanction my loan|guarantee.*approval|approval.*guarantee/.test(q);
 
 export function answer(question: string): Reply {
   const q = question.trim().toLowerCase().replace(/[’‘]/g, "'");
@@ -165,7 +165,7 @@ export function answer(question: string): Reply {
     };
   }
 
-  if (/submit.*documents.*approved|submitted.*documents.*approved|documents.*guarantee.*approval|submitting.*documents.*guarantee|guarantee.*approval|approval.*guarantee|definitely get|will i get|will.*loan.*approved|is my application approved|can you confirm.*approved|guarantee/.test(q)) {
+  if (hasApprovalGuaranteeIntent(q) || /submit.*documents.*approved|submitted.*documents.*approved|documents.*guarantee.*approval|submitting.*documents.*guarantee|will.*loan.*approved/.test(q)) {
     return { kind: "refusal", text: GUARANTEE_REPLY, source: "KB-04 / KB-05" };
   }
 
