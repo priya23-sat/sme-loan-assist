@@ -24,7 +24,9 @@ function Assistant() {
   ]);
   const [input, setInput] = useState("");
   const end = useRef<HTMLDivElement>(null);
-  useEffect(() => end.current?.scrollIntoView({ block: "nearest" }), [msgs]);
+  useEffect(() => {
+    end.current?.scrollIntoView({ block: "nearest" });
+  }, [msgs]);
 
   const send = (text: string) => {
     const t = text.trim();
