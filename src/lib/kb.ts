@@ -25,7 +25,7 @@ export const KB: KbEntry[] = [
     topic: "Bank statements",
     keywords: ["bank statement", "bank statements", "account statement", "passbook"],
     answer:
-      "Business bank statements are included in this demo checklist. The period covered varies by lender, loan product, and applicant circumstances.",
+      "Business bank statements are included in this demo checklist. The period covered and exact requirements vary by lender, loan product, and applicant circumstances.",
   },
   {
     id: "financial-statements",
