@@ -16,7 +16,14 @@ export const Route = createFileRoute("/assistant")({
 });
 
 type Msg = { role: "user" | "assistant"; text: string; reply?: Reply };
-const SUGGESTIONS = ["What documents do I need?", "What are the application stages?", "What does documents pending mean?", "Will my loan be approved?"];
+const SUGGESTIONS = [
+  "Are there loan schemes for small businesses?",
+  "What does turnover mean?",
+  "How do I understand a bank application form?",
+  "What might a credit manager ask me?",
+  "What documents do I need?",
+  "Translate the checklist into Marathi.",
+];
 
 function Assistant() {
   const [msgs, setMsgs] = useState<Msg[]>([
@@ -69,7 +76,7 @@ function Assistant() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about documents or stages (no personal info)"
+              placeholder="Ask in simple English (no personal info)"
               aria-label="Your question"
               className="flex-1 rounded-md border border-input px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
@@ -78,7 +85,7 @@ function Assistant() {
         </Card>
         <Card>
           <h2 className="font-semibold">Demo knowledge base</h2>
-          <p className="mt-1 text-xs text-muted-foreground">The assistant only answers from these topics. Anything else returns a safe fallback. It never guarantees approval or makes credit decisions.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Choose a common question to get a simple explanation. Answers use a small demo knowledge base; scheme rules and lender requirements must be verified with official sources. The assistant never guarantees approval or makes credit decisions.</p>
           <ul className="mt-3 space-y-2 text-sm">
             {KB.map((k) => (
               <li key={k.id} className="rounded-md bg-secondary px-3 py-2">{k.topic}</li>

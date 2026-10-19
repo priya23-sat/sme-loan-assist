@@ -116,6 +116,38 @@ export function answer(question: string): Reply {
     return { kind: "grounded", text: MARATHI_CHECKLIST, source: "Language support" };
   }
 
+  if (/loan scheme|loan schemes|government scheme|government schemes|scheme for small business|options.*loan|loan options|does.*scheme.*exist|small business.*loan/.test(q)) {
+    return {
+      kind: "grounded",
+      text: "Yes, loan options and government-supported programmes do exist for some small businesses. Examples include PMMY/MUDRA for eligible micro businesses and PMEGP for eligible new enterprises, but they have different rules and are not suitable for every business or every loan purpose. Check current details only on official government portals and confirm with an authorised lender. This demo cannot determine eligibility or guarantee approval.",
+      source: "General awareness — verify current official scheme rules",
+    };
+  }
+
+  if (/what does.*turnover mean|meaning of turnover|turnover.*meaning|what is turnover/.test(q)) {
+    return {
+      kind: "grounded",
+      text: "Turnover means the total sales or business income from selling goods or services during a period, before subtracting business expenses. If you are unsure of your figure, check your business records or ask your accountant. Do not guess on a bank form; ask the bank how it wants the figure reported.",
+      source: "Plain-language banking glossary",
+    };
+  }
+
+  if (/application form|fill.*form|form field|bank form|what should i write|what do i write/.test(q)) {
+    return {
+      kind: "grounded",
+      text: "Take the form one question at a time. Read the field label, check your own business records, and enter only information you know is correct. Common fields ask about business details, loan purpose, sales/turnover, existing loans, and how you expect to repay. If a field is unclear or you do not know the answer, leave it for clarification and ask the bank staff before submitting. Never guess or share private IDs in this demo.",
+      source: "General form-preparation guidance",
+    };
+  }
+
+  if (/credit manager|bank manager.*ask|what.*bank.*ask|practise.*question|practice.*question|what should i say|how to answer|afraid.*answer|fear.*question/.test(q)) {
+    return {
+      kind: "grounded",
+      text: "You can prepare by explaining three things in your own words: (1) what your business does, (2) why you need the loan and how you plan to use it, and (3) how the business expects to repay it. Use real figures from your records. If you do not know an answer, it is okay to say, 'I am not sure; I will check my records and confirm.' This practice guide cannot predict a lender's exact questions.",
+      source: "Bank-visit practice guide",
+    };
+  }
+
   // Handle specific unavailable facts before broad approval/eligibility or process rules.
   if (/interest rate|rate of interest|what rate|\bemi\b|\bfees?\b|\bcharges?\b|collateral|loan tenure/.test(q)) {
     return {

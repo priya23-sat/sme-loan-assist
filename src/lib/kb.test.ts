@@ -22,6 +22,13 @@ describe("SME Loan Application Copilot", () => {
     expect(answer("Do I need bank statements?").text.toLowerCase()).toContain("bank statements");
   });
 
+  it("supports the interview-led plain-language journey", () => {
+    expect(answer("Are there loan schemes for small businesses?").text.toLowerCase()).toContain("government-supported programmes");
+    expect(answer("What does turnover mean?").text.toLowerCase()).toContain("total sales");
+    expect(answer("How do I understand a bank application form?").text.toLowerCase()).toContain("one question at a time");
+    expect(answer("What might a credit manager ask me?").text.toLowerCase()).toContain("what your business does");
+  });
+
   it("handles sensitive identifiers without repeating them", () => {
     const reply = answer("My PAN is ABCDE1234F. Check my real application.");
     expect(reply.kind).toBe("refusal");
