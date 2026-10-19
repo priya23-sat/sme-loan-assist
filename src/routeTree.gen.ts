@@ -11,8 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AssistantRouteImport } from './routes/assistant'
+import { Route as ChecklistRouteImport } from './routes/checklist'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as EvaluationRouteImport } from './routes/evaluation'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ReportRouteImport } from './routes/report'
+import { Route as TrackerRouteImport } from './routes/tracker'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,6 +26,11 @@ const IndexRoute = IndexRouteImport.update({
 const AssistantRoute = AssistantRouteImport.update({
   id: '/assistant',
   path: '/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChecklistRoute = ChecklistRouteImport.update({
+  id: '/checklist',
+  path: '/checklist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocumentsRoute = DocumentsRouteImport.update({
@@ -34,39 +43,95 @@ const EvaluationRoute = EvaluationRouteImport.update({
   path: '/evaluation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportRoute = ReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackerRoute = TrackerRouteImport.update({
+  id: '/tracker',
+  path: '/tracker',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
+  '/checklist': typeof ChecklistRoute
   '/documents': typeof DocumentsRoute
   '/evaluation': typeof EvaluationRoute
+  '/profile': typeof ProfileRoute
+  '/report': typeof ReportRoute
+  '/tracker': typeof TrackerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
+  '/checklist': typeof ChecklistRoute
   '/documents': typeof DocumentsRoute
   '/evaluation': typeof EvaluationRoute
+  '/profile': typeof ProfileRoute
+  '/report': typeof ReportRoute
+  '/tracker': typeof TrackerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
+  '/checklist': typeof ChecklistRoute
   '/documents': typeof DocumentsRoute
   '/evaluation': typeof EvaluationRoute
+  '/profile': typeof ProfileRoute
+  '/report': typeof ReportRoute
+  '/tracker': typeof TrackerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assistant' | '/documents' | '/evaluation'
+  fullPaths:
+    | '/'
+    | '/assistant'
+    | '/checklist'
+    | '/documents'
+    | '/evaluation'
+    | '/profile'
+    | '/report'
+    | '/tracker'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assistant' | '/documents' | '/evaluation'
-  id: '__root__' | '/' | '/assistant' | '/documents' | '/evaluation'
+  to:
+    | '/'
+    | '/assistant'
+    | '/checklist'
+    | '/documents'
+    | '/evaluation'
+    | '/profile'
+    | '/report'
+    | '/tracker'
+  id:
+    | '__root__'
+    | '/'
+    | '/assistant'
+    | '/checklist'
+    | '/documents'
+    | '/evaluation'
+    | '/profile'
+    | '/report'
+    | '/tracker'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssistantRoute: typeof AssistantRoute
+  ChecklistRoute: typeof ChecklistRoute
   DocumentsRoute: typeof DocumentsRoute
   EvaluationRoute: typeof EvaluationRoute
+  ProfileRoute: typeof ProfileRoute
+  ReportRoute: typeof ReportRoute
+  TrackerRoute: typeof TrackerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -85,6 +150,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checklist': {
+      id: '/checklist'
+      path: '/checklist'
+      fullPath: '/checklist'
+      preLoaderRoute: typeof ChecklistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/documents': {
       id: '/documents'
       path: '/documents'
@@ -99,14 +171,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EvaluationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report': {
+      id: '/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tracker': {
+      id: '/tracker'
+      path: '/tracker'
+      fullPath: '/tracker'
+      preLoaderRoute: typeof TrackerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssistantRoute: AssistantRoute,
+  ChecklistRoute: ChecklistRoute,
   DocumentsRoute: DocumentsRoute,
   EvaluationRoute: EvaluationRoute,
+  ProfileRoute: ProfileRoute,
+  ReportRoute: ReportRoute,
+  TrackerRoute: TrackerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
