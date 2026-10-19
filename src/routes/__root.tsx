@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import { Shell } from "@/components/shell";
 import { AppStateProvider } from "@/lib/app-state";
+import { ReadinessProvider } from "@/lib/readiness-state";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -121,7 +122,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <AppStateProvider><Shell><Outlet /></Shell></AppStateProvider>
+      <AppStateProvider><ReadinessProvider><Shell><Outlet /></Shell></ReadinessProvider></AppStateProvider>
     </QueryClientProvider>
   );
 }
