@@ -52,6 +52,12 @@ function ProfilePage() {
         <h1 className="flex items-center gap-2 text-2xl font-semibold"><Truck className="h-6 w-6 text-primary" /> Business profile</h1>
         <p className="mt-1 text-sm text-muted-foreground">For small transport businesses preparing to approach a bank or lender. No personal or ID details are needed. Your answers stay in this browser.</p>
       </div>
+      <Card className="border-primary/20 bg-tint">
+        <h2 className="font-semibold">What should I do here?</h2>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          Enter basic details about your business and why you need the loan. This helps create a more relevant document checklist. Use approximate figures if needed, and do not enter PAN, Aadhaar, bank account numbers, or other sensitive details.
+        </p>
+      </Card>
       <Card>
         <form onSubmit={submit} noValidate className="space-y-4">
           <Select id="businessType" label="Business type" value={form.businessType} onChange={set("businessType")} options={BUSINESS_TYPES} error={errors.businessType} />
