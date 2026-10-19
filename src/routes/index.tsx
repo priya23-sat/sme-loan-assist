@@ -57,6 +57,13 @@ function HomePage() {
         <p className="mt-3 text-xs text-primary-foreground/75">No account needed. Do not enter PAN, Aadhaar, account numbers, or upload private documents.</p>
       </section>
 
+      <Card className="border-primary/20 bg-tint">
+        <h2 className="font-semibold">In simple words</h2>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          This tool helps you prepare before speaking to a bank: describe your business, see documents a lender may ask for, and track what you have ready. It does not guarantee loan approval.
+        </p>
+      </Card>
+
       <section className="grid gap-4 md:grid-cols-3" aria-label="How SME Loan Ready helps">
         {FEATURES.map((feature, index) => (
           <Card key={feature.title} className="h-full">
