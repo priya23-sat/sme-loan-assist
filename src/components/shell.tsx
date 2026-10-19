@@ -20,7 +20,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
           <Link to="/" className="flex items-center gap-2 font-semibold">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-foreground/15"><Landmark className="h-4 w-4" /></span>
-            SME Loan Application Copilot
+            SME Loan Ready
           </Link>
           <nav className="flex flex-wrap gap-1 text-sm">
             {NAV.map((n) => (
