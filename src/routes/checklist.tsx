@@ -30,6 +30,12 @@ function ChecklistPage() {
     <div className="space-y-6">
       <StepBar current={1} />
       <h1 className="flex items-center gap-2 text-2xl font-semibold"><ListChecks className="h-6 w-6 text-primary" /> Your document checklist</h1>
+      <Card className="border-primary/20 bg-tint">
+        <h2 className="font-semibold">How to use this list</h2>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          These are documents a lender may ask for based on the details you entered. The reason beside each item explains why it may be needed. Requirements differ by bank and loan type, so confirm the final list with your lender.
+        </p>
+      </Card>
       <NeedsProfile>
         <GuidanceNote />
         <Card>
