@@ -41,7 +41,7 @@ describe("checklist rules", () => {
 describe("progress", () => {
   it("excludes Not Applicable items from the percentage", () => {
     const items = buildChecklist(base);
-    const [a, b] = items;
+    const a = items[0]!, b = items[1]!;
     const s = summarize(items, { [a.id]: "ready", [b.id]: "na" });
     expect(s.applicable).toBe(items.length - 1);
     expect(s.percent).toBe(Math.round((1 / (items.length - 1)) * 100));

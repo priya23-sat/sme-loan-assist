@@ -75,7 +75,7 @@ function ProfilePage() {
 const inputCls = (err?: string) =>
   `mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring ${err ? "border-destructive" : "border-input"}`;
 
-function Field({ id, label, error, hint, children }: { id: string; label: string; error?: string; hint?: string; children: React.ReactNode }) {
+function Field({ id, label, error, hint, children }: { id: string; label: string; error?: string | undefined; hint?: string; children: React.ReactNode }) {
   return (
     <div>
       <label htmlFor={`f-${id}`} className="text-sm font-medium">{label} <span className="text-destructive">*</span></label>
@@ -87,7 +87,7 @@ function Field({ id, label, error, hint, children }: { id: string; label: string
 }
 
 function Select({ id, label, value, onChange, options, error }: {
-  id: string; label: string; value: string; error?: string;
+  id: string; label: string; value: string; error?: string | undefined;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void; options: readonly { value: string; label: string }[];
 }) {
   return (
