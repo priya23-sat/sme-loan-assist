@@ -33,6 +33,12 @@ function TrackerPage() {
     <div className="space-y-6">
       <StepBar current={2} />
       <h1 className="flex items-center gap-2 text-2xl font-semibold"><ClipboardList className="h-6 w-6 text-primary" /> Readiness tracker</h1>
+      <Card className="border-primary/20 bg-tint">
+        <h2 className="font-semibold">How to update your progress</h2>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          For each document, choose “Ready” if you have it, “Missing” if you still need it, or “Not applicable” if it does not apply to your business. Your progress summary updates as you mark items. This is a preparation aid, not a bank approval score.
+        </p>
+      </Card>
       <NeedsProfile>
         <Card className="bg-tint">
           <div className="flex justify-between text-sm font-medium"><span>{s.ready.length} of {s.applicable} applicable ready</span><span>{s.percent}%</span></div>
