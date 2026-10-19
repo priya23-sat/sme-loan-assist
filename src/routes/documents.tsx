@@ -81,6 +81,17 @@ function Preview({ doc, onClose, onSubmit }: { doc: Doc; onClose: () => void; on
           </div>
           <div className="flex items-center gap-2 text-sm">Status: <StatusBadge ok={doc.submitted}>{doc.submitted ? `Submitted ${doc.submittedOn ?? ""}` : "Pending"}</StatusBadge></div>
           <div>
+            <div className="rounded-md bg-tint p-3 text-sm">
+  <h3 className="font-semibold">Simple explanation</h3>
+  <p className="mt-1">
+    This section explains what the bank may need from you
+    and why it may ask for this document.
+  </p>
+  <p className="mt-2 text-muted-foreground">
+    Hindi: यहाँ आसान भाषा में बताया गया है कि बैंक को यह
+    दस्तावेज़ क्यों चाहिए।
+  </p>
+</div>
             <h3 className="text-sm font-semibold">Typical requirements</h3>
             <ul className="mt-1 list-disc pl-5 text-sm text-muted-foreground">{doc.requirements.map((r) => <li key={r}>{r}</li>)}</ul>
           </div>
