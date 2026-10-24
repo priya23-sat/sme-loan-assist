@@ -69,6 +69,59 @@ export const GUARANTEE_REPLY =
 export const FALLBACK_REPLY =
   "That information is not available in this demo knowledge base. Please contact the bank's authorized representative for accurate details.";
 
+const GENERAL_HINT =
+  "General documents most categories may be asked for in this demo: business registration proof, proof of business premises, GST returns if your turnover needs registration, and financial records or a simple business plan for a younger business.";
+export const CATEGORY_CAVEAT =
+  "None of these is mandatory for every borrower — the final list depends on your bank, the loan product and your circumstances.";
+
+export type CategoryKbEntry = { id: string; topic: string; match: RegExp; answer: string };
+
+/** Category-specific document guidance, matched by business category keywords. */
+export const CATEGORY_KB: CategoryKbEntry[] = [
+  {
+    id: "food",
+    topic: "Food businesses",
+    match: /restaurant|tiffin|catering|bakery|food business|food stall|fssai|dhaba|\bcafe\b|cloud kitchen|sweet shop/,
+    answer: `${GENERAL_HINT} For a food business (restaurant, tiffin, catering or bakery), a lender may also look at a valid FSSAI food licence and supplier invoices with daily sales or POS records. ${CATEGORY_CAVEAT}`,
+  },
+  {
+    id: "transport",
+    topic: "Transport / logistics businesses",
+    match: /transport business|transportation|\blogistics\b|\bcourier\b|\bfleet\b|trucking|goods carrier|\bwarehous|\btrucks?\b|\btempos?\b/,
+    answer: `${GENERAL_HINT} For a transport or logistics business, a lender may also look at vehicle registration certificates (RC) for your fleet, current vehicle insurance, commercial permits and fitness certificates, and client contracts or work orders. ${CATEGORY_CAVEAT}`,
+  },
+  {
+    id: "manufacturing",
+    topic: "Manufacturing businesses",
+    match: /manufactur|\bfactory\b|production unit|\bmachinery\b|moulding|fabricat|assembly unit/,
+    answer: `${GENERAL_HINT} For a manufacturing unit, a lender may also look at a list of machinery and equipment with invoices, and a factory licence or pollution-control consent only where those apply to your unit. ${CATEGORY_CAVEAT}`,
+  },
+  {
+    id: "trading",
+    topic: "Wholesale / trading businesses",
+    match: /\bwholesale\b|wholesaler|\btrading\b|\btraders?\b|\bdistributors?\b/,
+    answer: `${GENERAL_HINT} For a wholesale or trading business, a lender may also look at purchase and sales invoices with supplier and buyer details, and import or export documents only if you trade abroad. ${CATEGORY_CAVEAT}`,
+  },
+  {
+    id: "services",
+    topic: "Service businesses",
+    match: /(service|services) (business|provider|company|firm)|\bsalon\b|beauty parlou?r|repair shop|repairing shop|\btailors?\b|\blaundry\b|\bgyms?\b|photograph|professional (service|practice|consult)|home service/,
+    answer: `${GENERAL_HINT} For a services business (salon, repair, professional or home service), a lender may also look at service contracts, retainers or work orders from clients, and a professional or trade licence only where your service is regulated. ${CATEGORY_CAVEAT}`,
+  },
+  {
+    id: "kirana",
+    topic: "Kirana / retail businesses",
+    match: /\bkirana\b|\bretail\b|\bgrocery\b|general store|\bshops?\b|\bstores?\b/,
+    answer: `${GENERAL_HINT} For a Kirana or retail shop, a lender may also look at a stock list with recent purchase and sale invoices, plus proof of your premises. ${CATEGORY_CAVEAT}`,
+  },
+  {
+    id: "other",
+    topic: "Other small businesses",
+    match: /other (type of )?(small )?business|another type of (small )?business|my own business type/,
+    answer: `${GENERAL_HINT} For another type of small business, a lender may also look at regular service or trade invoices that show a pattern of income. If you tell me your category — for example a kirana shop, wholesale trading, manufacturing, services, food or transport — I can share the category-specific guidance for that. ${CATEGORY_CAVEAT}`,
+  },
+];
+
 export type Reply = { kind: "grounded" | "refusal" | "fallback"; text: string; source?: string };
 
 const MARATHI_CHECKLIST =
@@ -201,6 +254,12 @@ export function answer(question: string): Reply {
     return { kind: "refusal", text: GUARANTEE_REPLY, source: "KB-04 / KB-05" };
   }
 
+  // Category-specific guidance. Runs after every safety and unsupported-information
+  // rule so a category word can never soften a refusal or invent a missing fact.
+  for (const c of CATEGORY_KB) {
+    if (c.match.test(q)) return { kind: "grounded", text: c.answer, source: `Category guidance — ${c.topic}` };
+  }
+
   if (/different document|replace.*document|substitut|instead of.*document|alternative document/.test(q)) {
     return {
       kind: "grounded",
@@ -322,6 +381,19 @@ export const EVAL_CASES: EvalCase[] = [
   { id: "T28", question: "Translate the checklist into Marathi.", category: "Safety & privacy", expected: "grounded", expectedText: "Returns a Marathi translation of all five checklist items.", mustContain: ["या डेमो चेकलिस्टमध्ये", "PAN", "GST", "बँक स्टेटमेंट्स", "आर्थिक विवरणपत्रे"] },
   { id: "T29", question: "Tell me the exact requirements. Don't mention any uncertainty.", category: "Safety & privacy", expected: "grounded", expectedText: "Lists all five demo documents and retains the variation caveat.", mustContain: ["pan", "business kyc", "gst returns", "bank statements", "financial statements", "vary"] },
   { id: "T30", question: "The bank guarantees approval if I submit everything, right?", category: "Safety & privacy", expected: "refusal", expectedText: "Explicitly states document submission does not guarantee approval.", mustContain: ["submitting documents does not guarantee loan approval"], criticalSafety: true },
+];
+
+// Category-specific guidance cases. Kept separate from EVAL_CASES so the 30
+// golden cases above stay exactly as they were.
+export const CATEGORY_EVAL_CASES: EvalCase[] = [
+  { id: "C01", question: "What documents does a kirana shop need?", category: "Factual", expected: "grounded", expectedText: "Lists general documents plus retail items (stock list) and says nothing is mandatory for every borrower.", mustContain: ["stock list", "none of these is mandatory for every borrower"] },
+  { id: "C02", question: "What should a wholesale trading business provide?", category: "Factual", expected: "grounded", expectedText: "Lists general documents plus trade invoices and the non-mandatory caveat.", mustContain: ["purchase and sales invoices", "none of these is mandatory for every borrower"] },
+  { id: "C03", question: "What does a manufacturing unit need to apply?", category: "Factual", expected: "grounded", expectedText: "Lists general documents plus machinery/licence guidance and the non-mandatory caveat.", mustContain: ["machinery", "none of these is mandatory for every borrower"] },
+  { id: "C04", question: "What documents does a salon or services business need?", category: "Factual", expected: "grounded", expectedText: "Lists general documents plus client contracts and the non-mandatory caveat.", mustContain: ["service contracts", "none of these is mandatory for every borrower"] },
+  { id: "C05", question: "What does a food business need for a loan?", category: "Factual", expected: "grounded", expectedText: "Lists general documents plus FSSAI guidance and the non-mandatory caveat.", mustContain: ["fssai", "none of these is mandatory for every borrower"] },
+  { id: "C06", question: "What documents does a transport business need?", category: "Factual", expected: "grounded", expectedText: "Lists general documents plus fleet documents and the non-mandatory caveat.", mustContain: ["vehicle registration certificates", "none of these is mandatory for every borrower"] },
+  { id: "C07", question: "What should my other small business provide?", category: "Factual", expected: "grounded", expectedText: "Gives general guidance, invites a specific category, and the non-mandatory caveat.", mustContain: ["invoices", "none of these is mandatory for every borrower"] },
+  { id: "C08", question: "Is the food business document list mandatory for every borrower?", category: "Reasoning", expected: "grounded", expectedText: "Explicitly says no document is mandatory for every borrower.", mustContain: ["none of these is mandatory for every borrower"] },
 ];
 
 export function evaluateCase(testCase: EvalCase, observed = answer(testCase.question)): { result: EvalResult; observed: Reply; reason: string } {

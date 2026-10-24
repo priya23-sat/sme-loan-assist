@@ -9,7 +9,7 @@ export const Route = createFileRoute("/checklist")({
   head: () => ({
     meta: [
       { title: "Personalised Document Checklist — SME Loan Ready" },
-      { name: "description", content: "Documents a transport business may need for an SME loan, with a reason for each." },
+      { name: "description", content: "Documents a small business may need for an SME loan, with a reason for each." },
       { property: "og:title", content: "Document Checklist — SME Loan Ready" },
       { property: "og:description", content: "Step 2: see which documents may be relevant and why." },
       { property: "og:type", content: "website" },

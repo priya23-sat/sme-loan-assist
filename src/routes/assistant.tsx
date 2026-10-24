@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/shell";
-import { answer, KB, type Reply } from "@/lib/kb";
+import { answer, KB, CATEGORY_KB, type Reply } from "@/lib/kb";
 
 export const Route = createFileRoute("/assistant")({
   head: () => ({
@@ -20,6 +20,8 @@ const SUGGESTIONS = [
   "Are there loan schemes for small businesses?",
   "What does turnover mean?",
   "How do I understand a bank application form?",
+  "What documents does a kirana shop need?",
+  "What does a food business need?",
   "What might a credit manager ask me?",
   "What documents do I need?",
   "Translate the checklist into Marathi.",
@@ -88,6 +90,13 @@ function Assistant() {
           <p className="mt-1 text-xs text-muted-foreground">Choose a common question to get a simple explanation. Answers use a small demo knowledge base; scheme rules and lender requirements must be verified with official sources. The assistant never guarantees approval or makes credit decisions.</p>
           <ul className="mt-3 space-y-2 text-sm">
             {KB.map((k) => (
+              <li key={k.id} className="rounded-md bg-secondary px-3 py-2">{k.topic}</li>
+            ))}
+          </ul>
+          <h3 className="mt-5 font-semibold">Business-category guidance</h3>
+          <p className="mt-1 text-xs text-muted-foreground">Ask about your own category to get category-specific examples. No document is presented as mandatory for every borrower.</p>
+          <ul className="mt-3 space-y-2 text-sm">
+            {CATEGORY_KB.map((k) => (
               <li key={k.id} className="rounded-md bg-secondary px-3 py-2">{k.topic}</li>
             ))}
           </ul>

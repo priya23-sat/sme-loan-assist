@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Card } from "@/components/shell";
-import { EVAL_CASES, evaluateCase } from "@/lib/kb";
+import { EVAL_CASES, CATEGORY_EVAL_CASES, evaluateCase } from "@/lib/kb";
 
 export const Route = createFileRoute("/evaluation")({
   head: () => ({
@@ -28,6 +28,7 @@ function Metric({ label, value }: { label: string; value: string | number }) {
 
 function Evaluation() {
   const [ran, setRan] = useState(false);
+  const [ranCategories, setRanCategories] = useState(false);
   const results = EVAL_CASES.map((testCase) => ({ testCase, ...evaluateCase(testCase) }));
   const passed = results.filter((r) => r.result === "PASS").length;
   const failed = results.filter((r) => r.result === "FAIL").length;
@@ -37,6 +38,9 @@ function Evaluation() {
   const unsupported = results.filter((r) => r.testCase.category === "Unsupported information");
   const safety = results.filter((r) => r.testCase.category === "Safety & privacy");
   const criticalFailures = results.filter((r) => r.testCase.criticalSafety && r.result === "FAIL").length;
+
+  const categoryResults = CATEGORY_EVAL_CASES.map((testCase) => ({ testCase, ...evaluateCase(testCase) }));
+  const categoryPassed = categoryResults.filter((r) => r.result === "PASS").length;
 
   return (
     <div className="space-y-6">
@@ -150,6 +154,64 @@ function Evaluation() {
           </tbody>
         </table>
       </div>
+      <Card className="flex flex-col gap-3 bg-secondary sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+        <div>
+          <h2 className="font-semibold">Business-category guidance tests ({CATEGORY_EVAL_CASES.length})</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Checks that Kirana/retail, wholesale/trading, manufacturing, services, food, transport and other businesses each get their own guidance, and that no document is presented as mandatory for every borrower.
+          </p>
+          {ranCategories && (
+            <p className="mt-2 text-sm font-medium">
+              {categoryPassed}/{categoryResults.length} passed against the same answer() function used by the chat.
+            </p>
+          )}
+        </div>
+        <button
+          onClick={() => setRanCategories(true)}
+          className="shrink-0 rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-tint"
+        >
+          Run category tests
+        </button>
+      </Card>
+
+      {ranCategories && (
+        <div className="overflow-x-auto rounded-lg border">
+          <table className="w-full min-w-[900px] text-left text-sm">
+            <thead className="bg-secondary text-xs uppercase text-muted-foreground">
+              <tr>
+                <th className="p-3">ID / Question</th>
+                <th className="p-3">Expected behavior</th>
+                <th className="p-3">Observed response</th>
+                <th className="p-3">Result / reason</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {categoryResults.map(({ testCase, observed, result, reason }) => (
+                <tr key={testCase.id} className="align-top">
+                  <td className="p-3">
+                    <div className="font-semibold">{testCase.id}</div>
+                    <div className="mt-1 font-medium">{testCase.question}</div>
+                    <div className="mt-1 text-xs text-muted-foreground">{testCase.category}</div>
+                  </td>
+                  <td className="p-3">{testCase.expectedText}</td>
+                  <td className="p-3">
+                    <div className="font-medium">{LABEL[observed.kind]}</div>
+                    <p className="mt-1 whitespace-normal">{observed.text}</p>
+                    {observed.source && <p className="mt-1 text-xs text-muted-foreground">Source: {observed.source}</p>}
+                  </td>
+                  <td className="p-3">
+                    <span className={`inline-block rounded px-2 py-0.5 text-xs font-semibold ${result === "PASS" ? "bg-primary text-primary-foreground" : result === "FAIL" ? "bg-destructive text-destructive-foreground" : "border text-muted-foreground"}`}>
+                      {result}
+                    </span>
+                    <p className="mt-2 max-w-xs">{reason}</p>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       <p className="text-xs text-muted-foreground">
         Important: These tests check the fixed rule-based response function and required phrases. They do not prove production AI performance or replace manual testing in the rendered application.
       </p>

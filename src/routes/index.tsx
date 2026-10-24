@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ClipboardCheck, FileText, MessageCircle, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, ClipboardCheck, FileText, MessageCircle, ShieldCheck, Store } from "lucide-react";
 import { Card } from "@/components/shell";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "SME Loan Ready — Prepare Before You Visit the Bank" },
-      { name: "description", content: "A simple guide for small transport businesses to explore possible loan options, understand documents, and prepare for a bank visit." },
+      { name: "description", content: "A simple guide for small businesses in India to explore possible loan options, understand documents, and prepare for a bank visit." },
       { property: "og:title", content: "SME Loan Ready" },
       { property: "og:description", content: "Understand your options. Prepare your documents. Get ready to talk to your bank." },
       { property: "og:type", content: "website" },
@@ -38,8 +38,8 @@ function HomePage() {
     <div className="mx-auto max-w-4xl space-y-8">
       <section className="overflow-hidden rounded-2xl bg-hero p-6 text-primary-foreground sm:p-10">
         <div className="flex items-center gap-2 text-sm font-medium text-primary-foreground/80">
-          <Truck className="h-5 w-5" aria-hidden />
-          Made for small transport businesses
+          <Store className="h-5 w-5" aria-hidden />
+          Made for small businesses across India
         </div>
         <h1 className="mt-4 max-w-2xl text-3xl font-bold leading-tight sm:text-4xl">
           Get ready for a business loan — one simple step at a time.

@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Truck } from "lucide-react";
+import { Store } from "lucide-react";
 import { Card } from "@/components/shell";
 import { StepBar } from "@/components/journey";
 import { useReadiness } from "@/lib/readiness-state";
@@ -10,9 +10,9 @@ export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
       { title: "Business Profile — SME Loan Ready" },
-      { name: "description", content: "Tell us about your transport business to get a personalised loan document checklist." },
+      { name: "description", content: "Tell us about your business to get a personalised loan document checklist." },
       { property: "og:title", content: "Business Profile — SME Loan Ready" },
-      { property: "og:description", content: "Step 1: describe your transport business and loan need." },
+      { property: "og:description", content: "Step 1: describe your business and loan need." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -49,8 +49,8 @@ function ProfilePage() {
     <div className="space-y-6">
       <StepBar current={0} />
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-semibold"><Truck className="h-6 w-6 text-primary" /> Business profile</h1>
-        <p className="mt-1 text-sm text-muted-foreground">For small transport businesses preparing to approach a bank or lender. No personal or ID details are needed. Your answers stay in this browser.</p>
+        <h1 className="flex items-center gap-2 text-2xl font-semibold"><Store className="h-6 w-6 text-primary" /> Business profile</h1>
+        <p className="mt-1 text-sm text-muted-foreground">For small businesses across India preparing to approach a bank or lender. No personal or ID details are needed. Your answers stay in this browser.</p>
       </div>
       <Card className="border-primary/20 bg-tint">
         <h2 className="font-semibold">What should I do here?</h2>
