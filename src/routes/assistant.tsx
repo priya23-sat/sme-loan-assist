@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/shell";
-import { answerIn, KB, CATEGORY_KB, type Reply } from "@/lib/kb";
+import { answerIn, topicAnswerIn, KB, CATEGORY_KB, type Reply } from "@/lib/kb";
 import { useLanguage } from "@/lib/language";
 
 export const Route = createFileRoute("/assistant")({
@@ -71,6 +71,17 @@ function Assistant() {
       { role: "assistant", text: r.text, reply: r },
     ]);
     setInput("");
+  };
+
+  // Clicking a Demo-knowledge-base or business-category topic shows that
+  // topic's answer as a chat exchange in the currently selected language.
+  const askTopic = (kind: "kb" | "category", id: string, label: string) => {
+    const r = topicAnswerIn(lang, kind, id);
+    setMsgs((m) => [
+      ...m,
+      { role: "user", text: label },
+      { role: "assistant", text: r.text, reply: r },
+    ]);
   };
 
   const suggestions = lang === "mr" ? SUGGESTIONS_MR : SUGGESTIONS_EN;
@@ -150,8 +161,14 @@ function Assistant() {
           <p className="mt-1 text-xs text-muted-foreground">{t("asstKbBody")}</p>
           <ul className="mt-3 space-y-2 text-sm">
             {KB.map((k) => (
-              <li key={k.id} className="rounded-md bg-secondary px-3 py-2">
-                {k.topic}
+              <li key={k.id}>
+                <button
+                  type="button"
+                  onClick={() => askTopic("kb", k.id, k.topic)}
+                  className="w-full rounded-md bg-secondary px-3 py-2 text-left hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {k.topic}
+                </button>
               </li>
             ))}
           </ul>
@@ -159,8 +176,14 @@ function Assistant() {
           <p className="mt-1 text-xs text-muted-foreground">{t("asstCatBody")}</p>
           <ul className="mt-3 space-y-2 text-sm">
             {CATEGORY_KB.map((k) => (
-              <li key={k.id} className="rounded-md bg-secondary px-3 py-2">
-                {k.topic}
+              <li key={k.id}>
+                <button
+                  type="button"
+                  onClick={() => askTopic("category", k.id, k.topic)}
+                  className="w-full rounded-md bg-secondary px-3 py-2 text-left hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {k.topic}
+                </button>
               </li>
             ))}
           </ul>

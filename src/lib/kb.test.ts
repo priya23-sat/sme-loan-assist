@@ -1,5 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { answer, CATEGORY_EVAL_CASES, EVAL_CASES, evaluateCase } from "./kb";
+import {
+  answer,
+  CATEGORY_EVAL_CASES,
+  CATEGORY_KB,
+  EVAL_CASES,
+  evaluateCase,
+  KB,
+  topicAnswerIn,
+} from "./kb";
+
+const DEVANAGARI = /[\u0900-\u097F]/;
 
 const CATEGORY_QUESTIONS: [question: string, evidence: string][] = [
   ["What documents does a kirana shop need?", "stock list"],
@@ -86,6 +96,42 @@ describe("category guidance", () => {
     expect(answer("What interest rate does a kirana shop get?").kind).toBe("fallback");
     expect(answer("What is the minimum turnover for a food business?").text.toLowerCase()).toContain("minimum turnover");
     expect(answer("What is my credit score for a transport business?").text.toLowerCase()).toContain("credit-score");
+  });
+
+  it("answers every clickable knowledge-base and category topic in English", () => {
+    expect(KB.length).toBeGreaterThanOrEqual(8);
+    for (const k of KB) {
+      const reply = topicAnswerIn("en", "kb", k.id);
+      expect(reply.kind, k.id).toBe("grounded");
+      expect(reply.text.length, k.id).toBeGreaterThan(0);
+      expect(reply.source, k.id).toBe(k.topic);
+    }
+    for (const c of CATEGORY_KB) {
+      const reply = topicAnswerIn("en", "category", c.id);
+      expect(reply.kind, c.id).toBe("grounded");
+      expect(reply.source, c.id).toBe(`Category guidance — ${c.topic}`);
+      expect(reply.text.toLowerCase(), c.id).toContain("none of these is mandatory for every borrower");
+    }
+  });
+
+  it("answers every clickable topic in Marathi when Marathi is selected", () => {
+    for (const k of KB) {
+      const reply = topicAnswerIn("mr", "kb", k.id);
+      expect(reply.kind, k.id).toBe("grounded");
+      expect(reply.text, k.id).toMatch(DEVANAGARI);
+    }
+    for (const c of CATEGORY_KB) {
+      const reply = topicAnswerIn("mr", "category", c.id);
+      expect(reply.kind, c.id).toBe("grounded");
+      expect(reply.text, c.id).toMatch(DEVANAGARI);
+    }
+  });
+
+  it("falls back safely for unknown topic ids in both languages", () => {
+    expect(topicAnswerIn("en", "kb", "no-such-topic").kind).toBe("fallback");
+    expect(topicAnswerIn("mr", "kb", "no-such-topic").kind).toBe("fallback");
+    expect(topicAnswerIn("en", "category", "no-such-category").kind).toBe("fallback");
+    expect(topicAnswerIn("mr", "category", "no-such-category").kind).toBe("fallback");
   });
 
   it("keeps the golden dataset at 30 cases and evaluates every category case as PASS", () => {

@@ -469,6 +469,29 @@ const MR_CATEGORY_MATCH: [string, RegExp][] = [
   ["kirana", /किराणा|रिटेल|किराणा दुकान|ग्रोसरी|kirana|retail|grocery|general store/],
 ];
 
+// Marathi answer for every Demo-knowledge-base topic. Shared by the intent
+// rules below and by the clickable sidebar lookup (topicAnswerIn), so a topic
+// resolves to the same Marathi answer however it is asked.
+const MR_KB_TEXT = {
+  documents: MR_CHECKLIST_REPLY,
+  gst:
+    "GST रिटर्न्स या डेमो चेकलिस्टमध्ये समाविष्ट आहेत. किती महिने किंवा किती फायलिंग लागतील हे कर्जदाता, कर्ज उत्पादन आणि अर्जदाराच्या परिस्थितीनुसार बदलते. अंतिम आवश्यकता अधिकृत कर्जदात्याकडून पडताळा.",
+  "bank-statements":
+    "व्यवसायाचे बँक स्टेटमेंट्स या डेमो चेकलिस्टमध्ये समाविष्ट आहेत. कोणत्या कालावधीचे आणि कोणती अचूक आवश्यकता हे कर्जदाता, कर्ज उत्पादन आणि अर्जदाराच्या परिस्थितीनुसार बदलते.",
+  "financial-statements":
+    "होय. आर्थिक विवरणपत्रे डेमो चेकलिस्टमध्ये समाविष्ट आहेत, ज्यामध्ये नफा-तोट विवरणपत्र आणि प्रस्तावित शिळा खातेसारखी उदाहरणे आहेत. प्रत्यक्ष आवश्यकता कर्जदाता, कर्ज उत्पादन आणि अर्जदाराच्या परिस्थितीनुसार बदलतात.",
+  "pan-kyc":
+    "PAN आणि व्यवसायाचे KYC या डेमो चेकलिस्टमध्ये समाविष्ट आहेत. स्वीकारलेली KYC कागदपत्रे आणि अचूक आवश्यकता कर्जदाता आणि कर्ज उत्पादनानुसार बदलतात.",
+  stages:
+    "नमुना अर्ज 'Documents Pending' (कागदपत्रे प्रलंबित) या टप्प्यापासून सुरू होतो. कागदपत्र यादी पृष्ठ उघडा, प्रलंबित असलेल्या वस्तू पहा आणि डेमो नियंत्रणावरून ती 'सादर केलेले' म्हणून नोंदवा. हे केवळ प्रोटोटाईप बदलते; ते बँकेकडे कागदपत्र सादर करत नाही किंवा मंजुरीची खात्री देत नाही.",
+  status:
+    "काल्पनिक डेमो अर्ज SME-2026-1042 (ABC Traders) 'Documents Pending' (कागदपत्रे प्रलंबित) या स्थितीत सुरू होतो. सध्याच्या डेमो वस्तू कागदपत्र यादी पृष्ठावर पहा. ही थेट बँक स्थिती नाही.",
+  "documents-pending":
+    "'कागदपत्रे प्रलंबित' (Documents Pending) म्हणजे डेमो चेकलिस्टमध्ये एक किंवा अधिक वस्तू अजून 'सादर केलेले' म्हणून नोंदवलेल्या नाहीत. सध्याच्या वस्तू कागदपत्र यादी पृष्ठावर पहा. चेकलिस्ट पूर्ण करणे हे कर्ज मंजुरी नाही.",
+} satisfies Record<string, string>;
+
+type MrKbId = keyof typeof MR_KB_TEXT;
+
 const hasDevanagari = (q: string) => /[\u0900-\u097F]/.test(q);
 
 const MR_INTENT: { re: RegExp; kind: Reply["kind"]; text: string; source?: string }[] = [
@@ -551,37 +574,37 @@ const MR_INTENT: { re: RegExp; kind: Reply["kind"]; text: string; source?: strin
   {
     re: /gst|जीएसटी|जीएसटी रिटर्न/i,
     kind: "grounded",
-    text: "GST रिटर्न्स या डेमो चेकलिस्टमध्ये समाविष्ट आहेत. किती महिने किंवा किती फायलिंग लागतील हे कर्जदाता, कर्ज उत्पादन आणि अर्जदाराच्या परिस्थितीनुसार बदलते. अंतिम आवश्यकता अधिकृत कर्जदात्याकडून पडताळा.",
+    text: MR_KB_TEXT["gst"],
     source: "GST returns",
   },
   {
     re: /बँक स्टेटमेंट|खाते विहीर|passbook|bank statement/i,
     kind: "grounded",
-    text: "व्यवसायाचे बँक स्टेटमेंट्स या डेमो चेकलिस्टमध्ये समाविष्ट आहेत. कोणत्या कालावधीचे आणि कोणती अचूक आवश्यकता हे कर्जदाता, कर्ज उत्पादन आणि अर्जदाराच्या परिस्थितीनुसार बदलते.",
+    text: MR_KB_TEXT["bank-statements"],
     source: "Bank statements",
   },
   {
     re: /नफा-तोट|प्रस्तावित शिळा खाते|balance sheet|profit and loss|आर्थिक विवरण/i,
     kind: "grounded",
-    text: "होय. आर्थिक विवरणपत्रे डेमो चेकलिस्टमध्ये समाविष्ट आहेत, ज्यामध्ये नफा-तोट विवरणपत्र आणि प्रस्तावित शिळा खातेसारखी उदाहरणे आहेत. प्रत्यक्ष आवश्यकता कर्जदाता, कर्ज उत्पादन आणि अर्जदाराच्या परिस्थितीनुसार बदलतात.",
+    text: MR_KB_TEXT["financial-statements"],
     source: "Financial statements",
   },
   {
     re: /pan|kyc|ओळख पुरावा|identity/i,
     kind: "grounded",
-    text: "PAN आणि व्यवसायाचे KYC या डेमो चेकलिस्टमध्ये समाविष्ट आहेत. स्वीकारलेली KYC कागदपत्रे आणि अचूक आवश्यकता कर्जदाता आणि कर्ज उत्पादनानुसार बदलतात.",
+    text: MR_KB_TEXT["pan-kyc"],
     source: "PAN and KYC",
   },
   {
     re: /टप्पे|प्रक्रिया|पुढे काय|काय करावं|next step|process/i,
     kind: "grounded",
-    text: "नमुना अर्ज 'Documents Pending' (कागदपत्रे प्रलंबित) या टप्प्यापासून सुरू होतो. कागदपत्र यादी पृष्ठ उघडा, प्रलंबित असलेल्या वस्तू पहा आणि डेमो नियंत्रणावरून ती 'सादर केलेले' म्हणून नोंदवा. हे केवळ प्रोटोटाईप बदलते; ते बँकेकडे कागदपत्र सादर करत नाही किंवा मंजुरीची खात्री देत नाही.",
+    text: MR_KB_TEXT["stages"],
     source: "KB-01 / demo checklist",
   },
   {
     re: /स्थिती|माझा अर्ज कुठे|progress|status/i,
     kind: "grounded",
-    text: "काल्पनिक डेमो अर्ज SME-2026-1042 (ABC Traders) 'Documents Pending' (कागदपत्रे प्रलंबित) या स्थितीत सुरू होतो. सध्याच्या डेमो वस्तू कागदपत्र यादी पृष्ठावर पहा. ही थेट बँक स्थिती नाही.",
+    text: MR_KB_TEXT["status"],
     source: "Application status",
   },
 ];
@@ -621,6 +644,35 @@ export function answerMr(question: string): Reply {
 /** Answers in the selected language; English behaviour is unchanged. */
 export function answerIn(lang: "en" | "mr", question: string): Reply {
   return lang === "mr" ? answerMr(question) : answer(question);
+}
+
+/**
+ * Grounded reply for a clickable Demo-knowledge-base topic (`kind: "kb"`) or
+ * business-category topic (`kind: "category"`), in the currently selected
+ * language. The sidebar looks answers up directly by id so every listed item
+ * resolves to its own answer instead of depending on keyword matching.
+ */
+export function topicAnswerIn(lang: "en" | "mr", kind: "kb" | "category", id: string): Reply {
+  const missing = () => ({
+    kind: "fallback" as const,
+    text: lang === "mr" ? MR_FALLBACK : FALLBACK_REPLY,
+    source: "KB-06",
+  });
+
+  if (kind === "category") {
+    const entry = CATEGORY_KB.find((c) => c.id === id);
+    if (!entry) return missing();
+    const text = lang === "mr" ? MR_CATEGORY[entry.id] ?? entry.answer : entry.answer;
+    return { kind: "grounded", text, source: `Category guidance — ${entry.topic}` };
+  }
+
+  const entry = KB.find((k) => k.id === id);
+  if (!entry) return missing();
+  const text =
+    lang === "mr" && entry.id in MR_KB_TEXT
+      ? MR_KB_TEXT[entry.id as MrKbId]
+      : entry.answer;
+  return { kind: "grounded", text, source: entry.topic };
 }
 
 export type EvalResult = "PASS" | "FAIL" | "NEEDS REVIEW";
