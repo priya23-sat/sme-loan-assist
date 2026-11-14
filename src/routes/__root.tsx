@@ -128,11 +128,17 @@ function RootComponent() {
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
+      const registerServiceWorker = () => {
         navigator.serviceWorker.register("/sw.js").catch((error) => {
           console.error("SME Loan Ready service worker registration failed:", error);
         });
-      }, { once: true });
+      };
+
+      if (document.readyState === "complete") {
+        registerServiceWorker();
+      } else {
+        window.addEventListener("load", registerServiceWorker, { once: true });
+      }
     }
   }, []);
 
