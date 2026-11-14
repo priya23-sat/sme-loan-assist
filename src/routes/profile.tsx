@@ -91,7 +91,7 @@ function Field({ id, label, error, hint, children }: { id: string; label: string
   );
 }
 
-function Select({ id, label, value, onChange, options, error }: {
+function Select({ id, label, value, onChange, options, error, emptyLabel }: {
   id: string; label: string; value: string; error?: string | undefined;
   emptyLabel?: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void; options: readonly { value: string; label: string }[];
@@ -100,7 +100,7 @@ function Select({ id, label, value, onChange, options, error }: {
   return (
     <Field id={id} label={label} error={error}>
       <select id={`f-${id}`} value={value} onChange={onChange} className={inputCls(error)} aria-invalid={!!error} aria-describedby={error ? `e-${id}` : undefined}>
-        <option value="">{arguments[0]?.emptyLabel ?? text(language, "choose")}</option>
+        <option value="">{emptyLabel ?? text(language, "choose")}</option>
         {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </Field>
