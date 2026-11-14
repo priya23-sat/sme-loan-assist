@@ -78,9 +78,14 @@ export function buildChecklist(p: Profile): ChecklistItem[] {
   const items: ChecklistItem[] = [
     { id: "registration", name: "Business registration proof (e.g. Udyam certificate or shop licence)", priority: "High",
       rule: "A common business-document example", why: "May help show that the business operates as described." },
-    { id: "financials", name: "Business income and expense records", priority: "High",
-      rule: "A common business-document example", why: "May help the lender understand the business's financial activity." },
   ];
+  if (years < 2) {
+    items.push({ id: "plan", name: "Simple business plan with expected income and costs", priority: "High",
+      rule: "Because the business is under 2 years old", why: "With a short track record, a plan helps explain how the loan will be repaid." });
+  } else {
+    items.push({ id: "financials", name: "Business income and expense records", priority: "High",
+      rule: "A common business-document example", why: "May help the lender understand the business's financial activity." });
+  }
   if (["transport", "goods", "passenger", "logistics"].includes(p.businessType)) {
     items.push({ id: "vehicle_rc", name: "Vehicle registration certificates (RC)", priority: "High",
       rule: "Because the business involves transport", why: "May describe the vehicles used in the transport business." });
@@ -96,9 +101,6 @@ export function buildChecklist(p: Profile): ChecklistItem[] {
   if (p.turnover === "40to100" || p.turnover === "gt100")
     items.push({ id: "gst", name: "GST registration certificate and recent GST returns", priority: "High",
       rule: "Because your turnover is ₹40 lakh or more", why: "Businesses above GST thresholds are generally expected to be registered; returns show reported sales." });
-  if (years < 2)
-    items.push({ id: "plan", name: "Simple business plan with expected income and costs", priority: "High",
-      rule: "Because the business is under 2 years old", why: "With a short track record, a plan helps explain how the loan will be repaid." });
   if (p.purpose === "equipment" || p.purpose === "vehicle")
     items.push({ id: "quotation", name: "Equipment quotation or proforma invoice", priority: "High",
       rule: "Because the funding may be used to buy equipment", why: "May show the estimated cost of equipment you plan to buy." });
