@@ -119,18 +119,20 @@ export function buildChecklist(p: Profile): ChecklistItem[] {
   return items.sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
 }
 
-export type Status = "ready" | "missing" | "na";
+export type Status = "ready" | "missing" | "help" | "na";
 export type Statuses = Record<string, Status | undefined>;
 
 export function summarize(items: ChecklistItem[], statuses: Statuses) {
   const ready = items.filter((i) => statuses[i.id] === "ready");
   const missing = items.filter((i) => statuses[i.id] === "missing");
+  const help = items.filter((i) => statuses[i.id] === "help");
   const na = items.filter((i) => statuses[i.id] === "na");
   const unmarked = items.filter((i) => !statuses[i.id]);
   const applicable = items.length - na.length;
   const percent = applicable === 0 ? 0 : Math.round((ready.length / applicable) * 100);
-  const nextSteps = [...missing, ...unmarked].sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
-  return { ready, missing, na, unmarked, applicable, percent, nextSteps };
+  const pending = [...missing, ...unmarked].sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
+  const nextSteps = [...pending, ...help].sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
+  return { ready, missing, help, na, unmarked, pending, applicable, percent, nextSteps };
 }
 
 export function labelOf(list: readonly { value: string; label: string }[], v: string) {
