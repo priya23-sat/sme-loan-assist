@@ -1,103 +1,47 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ClipboardCheck, FileText, MessageCircle, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, BookOpenCheck, FileCheck2, ShieldCheck, Sparkles } from "lucide-react";
 import { Card } from "@/components/shell";
+import { useLanguage, text } from "@/lib/language";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "SME Loan Ready — Prepare Before You Visit the Bank" },
-      { name: "description", content: "A simple guide for small transport businesses to explore possible loan options, understand documents, and prepare for a bank visit." },
-      { property: "og:title", content: "SME Loan Ready" },
-      { property: "og:description", content: "Understand your options. Prepare your documents. Get ready to talk to your bank." },
-      { property: "og:type", content: "website" },
-    ],
-  }),
+  head: () => ({ meta: [
+    { title: "SME Loan Ready — Prepare for Your Bank Visit" },
+    { name: "description", content: "A bilingual preparation guide for small businesses to understand possible loan documents and prepare for a bank visit." },
+    { property: "og:title", content: "SME Loan Ready — Prepare for Your Bank Visit" },
+    { property: "og:description", content: "Understand your preparation steps, documents, and what to expect before approaching a bank." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: HomePage,
 });
 
-const FEATURES = [
-  {
-    icon: ClipboardCheck,
-    title: "Explore possible loan options",
-    text: "Learn about possible routes to finance and what to verify with a lender. No promise of eligibility or approval.",
-  },
-  {
-    icon: FileText,
-    title: "Understand your documents",
-    text: "See what common documents mean, why a bank may ask for them, and what to do next if you do not have one.",
-  },
-  {
-    icon: MessageCircle,
-    title: "Practise your bank conversation",
-    text: "Prepare simple, truthful answers to common questions before you visit a branch.",
-  },
-];
-
 function HomePage() {
-  return (
-    <div className="mx-auto max-w-4xl space-y-8">
-      <section className="overflow-hidden rounded-2xl bg-hero p-6 text-primary-foreground sm:p-10">
-        <div className="flex items-center gap-2 text-sm font-medium text-primary-foreground/80">
-          <Truck className="h-5 w-5" aria-hidden />
-          Made for small transport businesses
+  const { language } = useLanguage();
+  const t = (key: Parameters<typeof text>[1]) => text(language, key);
+  return <div className="mx-auto max-w-5xl space-y-12">
+    <section className="relative overflow-hidden rounded-lg bg-hero px-6 py-10 text-primary-foreground sm:px-10 sm:py-14">
+      <div className="max-w-3xl">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="inline-flex items-center gap-2 text-sm font-medium text-primary-foreground/85"><Sparkles className="h-4 w-4" />{t("homeEyebrow")}</span>
+          <span className="rounded-full border border-primary-foreground/30 px-2.5 py-1 text-xs font-medium">{t("demoMode")}</span>
         </div>
-        <h1 className="mt-4 max-w-2xl text-3xl font-bold leading-tight sm:text-4xl">
-          Get ready for a business loan — one simple step at a time.
-        </h1>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-primary-foreground/85">
-          Not sure which loan to ask about? Worried about documents or what a bank manager may ask?
-          Prepare at your own pace before you visit the branch.
-        </p>
-        <Link
-          to="/profile"
-          className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-background px-5 py-3 text-sm font-semibold text-foreground hover:opacity-90"
-        >
-          Start my preparation <ArrowRight className="h-4 w-4" />
-        </Link>
-        <p className="mt-3 text-xs text-primary-foreground/75">No account needed. Do not enter PAN, Aadhaar, account numbers, or upload private documents.</p>
-      </section>
-
-      <Card className="border-primary/20 bg-tint">
-        <h2 className="font-semibold">In simple words</h2>
-        <p className="mt-1 text-sm leading-6 text-muted-foreground">
-          This tool helps you prepare before speaking to a bank: describe your business, see documents a lender may ask for, and track what you have ready. It does not guarantee loan approval.
-        </p>
-      </Card>
-
-      <section className="grid gap-4 md:grid-cols-3" aria-label="How SME Loan Ready helps">
-        {FEATURES.map((feature, index) => (
-          <Card key={feature.title} className="h-full">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-tint text-primary">
-              <feature.icon className="h-5 w-5" aria-hidden />
-            </div>
-            <div className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Step {index + 1}</div>
-            <h2 className="mt-1 font-semibold">{feature.title}</h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">{feature.text}</p>
-          </Card>
-        ))}
-      </section>
-
-      <Card className="border-primary/20 bg-tint">
-        <div className="flex items-start gap-3">
-          <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
-          <div>
-            <h2 className="font-semibold">Guidance, not a loan decision</h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              This is an educational prototype. Loan schemes, eligibility and document lists can change and vary by lender.
-              Confirm current details with an authorised bank or scheme representative. Only the lender decides whether to approve a loan.
-            </p>
-          </div>
+        <h1 className="mt-5 max-w-2xl text-3xl font-semibold leading-tight sm:text-4xl">{t("homeTitle")}</h1>
+        <p className="mt-4 max-w-2xl text-base leading-7 text-primary-foreground/85">{t("homeSubtitle")}</p>
+        <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+          <Link to="/profile" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-background px-5 py-3 text-sm font-semibold text-foreground hover:opacity-90">{t("start")}<ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/finance" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-primary-foreground/40 px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary-foreground/10">{t("exploreFinance")}<BookOpenCheck className="h-4 w-4" /></Link>
         </div>
-      </Card>
-
-      <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-        <Link to="/assistant" className="inline-flex items-center justify-center gap-2 rounded-md border px-4 py-2.5 text-sm font-medium hover:bg-tint">
-          Ask a simple question <MessageCircle className="h-4 w-4" />
-        </Link>
-        <Link to="/report" className="inline-flex items-center justify-center gap-2 rounded-md border px-4 py-2.5 text-sm font-medium hover:bg-tint">
-          View preparation report <ArrowRight className="h-4 w-4" />
-        </Link>
+        <p className="mt-4 text-xs text-primary-foreground/75">{t("homeNote")}</p>
       </div>
-    </div>
-  );
+    </section>
+    <section className="grid gap-10 md:grid-cols-2 md:items-start">
+      <div className="space-y-3"><h2 className="text-2xl font-semibold">{t("homeHow")}</h2><p className="leading-7 text-muted-foreground">{t("homeHowText")}</p></div>
+      <div className="space-y-5">
+        <div className="flex gap-4"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-tint text-primary"><FileCheck2 className="h-5 w-5" /></span><div><h3 className="font-semibold">{t("checklistTitle")}</h3><p className="mt-1 text-sm text-muted-foreground">{t("checklistIntro")}</p></div></div>
+        <div className="flex gap-4"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-success-soft text-success"><ShieldCheck className="h-5 w-5" /></span><div><h3 className="font-semibold">{t("safetyTitle")}</h3><p className="mt-1 text-sm text-muted-foreground">{t("safetyText")}</p></div></div>
+      </div>
+    </section>
+    <Card className="border-warning/30 bg-warning-soft"><p className="text-sm leading-6"><strong>{t("guidanceLabel")}.</strong> {t("varyNote")} {t("noRecommendation")}</p></Card>
+    <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-primary"><Link to="/bank-visit" className="inline-flex items-center gap-2 hover:underline">{t("visitLink")}<ArrowRight className="h-4 w-4" /></Link><Link to="/finance" className="inline-flex items-center gap-2 hover:underline">{t("financeLink")}<ArrowRight className="h-4 w-4" /></Link></div>
+  </div>;
 }

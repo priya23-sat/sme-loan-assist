@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import { Shell } from "@/components/shell";
 import { AppStateProvider } from "@/lib/app-state";
 import { ReadinessProvider } from "@/lib/readiness-state";
+import { LanguageProvider } from "@/lib/language";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -122,7 +123,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <AppStateProvider><ReadinessProvider><Shell><Outlet /></Shell></ReadinessProvider></AppStateProvider>
+      <AppStateProvider><ReadinessProvider><LanguageProvider><Shell><Outlet /></Shell></LanguageProvider></ReadinessProvider></AppStateProvider>
     </QueryClientProvider>
   );
 }

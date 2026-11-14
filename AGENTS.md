@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep the readiness journey as a separate browser-local flow from the copilot demo; the shared shell may expose both without coupling their providers.

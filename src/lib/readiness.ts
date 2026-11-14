@@ -1,18 +1,29 @@
-// Loan readiness rules for small transport businesses.
+// Loan readiness rules for small businesses.
 // General guidance only — NOT verified lender-specific requirements.
 
 export const BUSINESS_TYPES = [
-  { value: "goods", label: "Goods transport (trucks / tempos)" },
-  { value: "passenger", label: "Passenger transport (bus / taxi / cab)" },
-  { value: "logistics", label: "Logistics / courier / warehousing" },
-  { value: "other", label: "Other transport service" },
+  { value: "food", label: "Food stall / Food business" },
+  { value: "grocery", label: "Grocery shop" },
+  { value: "retail", label: "Retail shop" },
+  { value: "manufacturing", label: "Manufacturing" },
+  { value: "trading", label: "Trading" },
+  { value: "transport", label: "Transport" },
+  { value: "other", label: "Other" },
+] as const;
+
+export const BUSINESS_AGES = [
+  { value: "0", label: "Less than 1 year" },
+  { value: "2", label: "1–3 years" },
+  { value: "4", label: "3–5 years" },
+  { value: "6", label: "More than 5 years" },
 ] as const;
 
 export const LOAN_PURPOSES = [
-  { value: "vehicle", label: "Buy a new or used vehicle" },
-  { value: "working_capital", label: "Working capital (fuel, salaries, repairs)" },
-  { value: "expansion", label: "Expansion (new route, depot, office)" },
-  { value: "refinance", label: "Refinance an existing loan" },
+  { value: "expansion", label: "Business expansion" },
+  { value: "equipment", label: "Equipment purchase" },
+  { value: "working_capital", label: "Working capital" },
+  { value: "stock", label: "Stock purchase" },
+  { value: "other", label: "Other" },
 ] as const;
 
 export const TURNOVER_RANGES = [
@@ -39,8 +50,8 @@ export type ProfileErrors = Partial<Record<keyof Profile, string>>;
 
 export function validateProfile(p: Profile): ProfileErrors {
   const e: ProfileErrors = {};
-  if (!BUSINESS_TYPES.some((b) => b.value === p.businessType)) e.businessType = "Please choose your business type.";
-  if (!LOAN_PURPOSES.some((b) => b.value === p.purpose)) e.purpose = "Please choose what the loan is for.";
+  if (![...BUSINESS_TYPES.map((b) => b.value), "goods", "passenger", "logistics"].includes(p.businessType)) e.businessType = "Please choose your business type.";
+  if (![...LOAN_PURPOSES.map((b) => b.value), "vehicle", "refinance"].includes(p.purpose)) e.purpose = "Please choose what the loan is for.";
   if (!TURNOVER_RANGES.some((b) => b.value === p.turnover)) e.turnover = "Please choose an approximate turnover range.";
   const y = p.years.trim();
   if (!y) e.years = "Please enter how many years the business has operated.";
@@ -66,36 +77,40 @@ export function buildChecklist(p: Profile): ChecklistItem[] {
   const amount = parseAmount(p);
   const items: ChecklistItem[] = [
     { id: "registration", name: "Business registration proof (e.g. Udyam certificate or shop licence)", priority: "High",
-      rule: "Recommended for every business", why: "Lenders usually want to see that the business formally exists and where it operates." },
-    { id: "vehicle_rc", name: "Vehicle registration certificates (RC) for your fleet", priority: "High",
-      rule: "Recommended for transport businesses", why: "Shows the vehicles you own and run, which is the core asset of a transport business." },
-    { id: "insurance", name: "Current vehicle insurance policies", priority: "Medium",
-      rule: "Recommended for transport businesses", why: "Lenders often check that operating vehicles are insured and active." },
+      rule: "A common business-document example", why: "May help show that the business operates as described." },
+    { id: "financials", name: "Business income and expense records", priority: "High",
+      rule: "A common business-document example", why: "May help the lender understand the business's financial activity." },
   ];
-  if (p.businessType === "goods" || p.businessType === "passenger")
+  if (["transport", "goods", "passenger", "logistics"].includes(p.businessType)) {
+    items.push({ id: "vehicle_rc", name: "Vehicle registration certificates (RC)", priority: "High",
+      rule: "Because the business involves transport", why: "May describe the vehicles used in the transport business." });
+    items.push({ id: "insurance", name: "Current vehicle insurance policies", priority: "Medium",
+      rule: "Because the business involves transport", why: "A lender may ask about cover for vehicles used by the business." });
+  }
+  if (p.businessType === "goods" || p.businessType === "passenger" || p.businessType === "transport")
     items.push({ id: "permits", name: "Commercial permits and fitness certificates", priority: "Medium",
-      rule: "Because you run goods or passenger vehicles", why: "Shows your vehicles are legally allowed to carry goods or passengers on your routes." });
-  if (p.businessType === "goods" || p.businessType === "logistics")
-    items.push({ id: "contracts", name: "Client contracts or work orders", priority: "Medium",
-      rule: "Because you carry goods for clients", why: "Regular contracts suggest steady future income, which helps a lender understand repayment ability." });
+      rule: "Because the business involves commercial vehicles", why: "May help explain whether commercial vehicles can operate on intended routes." });
+  if (["food", "grocery", "retail", "manufacturing", "trading", "goods", "logistics"].includes(p.businessType))
+    items.push({ id: "contracts", name: "Customer contracts, orders, or work agreements", priority: "Medium",
+      rule: "A common example where the business works with customers or suppliers", why: "May help explain expected business activity and customer work." });
   if (p.turnover === "40to100" || p.turnover === "gt100")
     items.push({ id: "gst", name: "GST registration certificate and recent GST returns", priority: "High",
       rule: "Because your turnover is ₹40 lakh or more", why: "Businesses above GST thresholds are generally expected to be registered; returns show reported sales." });
-  if (years >= 2)
-    items.push({ id: "financials", name: "Profit & loss statement and balance sheet (last 2 years)", priority: "High",
-      rule: "Because the business is 2+ years old", why: "Helps a lender see how profitable the business has been over time." });
-  else
+  if (years < 2)
     items.push({ id: "plan", name: "Simple business plan with expected income and costs", priority: "High",
       rule: "Because the business is under 2 years old", why: "With a short track record, a plan helps explain how the loan will be repaid." });
-  if (p.purpose === "vehicle")
-    items.push({ id: "quotation", name: "Dealer quotation / proforma invoice for the vehicle", priority: "High",
-      rule: "Because the loan is for a vehicle", why: "Shows the exact cost of what you plan to buy." });
+  if (p.purpose === "equipment" || p.purpose === "vehicle")
+    items.push({ id: "quotation", name: "Equipment quotation or proforma invoice", priority: "High",
+      rule: "Because the funding may be used to buy equipment", why: "May show the estimated cost of equipment you plan to buy." });
   if (p.purpose === "working_capital")
     items.push({ id: "receivables", name: "Summary of pending customer payments (receivables)", priority: "Medium",
-      rule: "Because the loan is for working capital", why: "Shows money you expect to receive and why short-term funds are needed." });
-  if (p.purpose === "expansion")
+      rule: "Because the funding may be for working capital", why: "May help describe short-term working-capital needs." });
+  if (p.purpose === "expansion" || p.purpose === "stock")
     items.push({ id: "cost_estimate", name: "Cost estimate for the expansion", priority: "Medium",
-      rule: "Because the loan is for expansion", why: "Explains how the requested amount will be used." });
+      rule: p.purpose === "stock" ? "Because the funding may be used to buy stock" : "Because the funding may be used for expansion", why: "May explain how the funds could be used for the planned business need." });
+  if (p.purpose === "other")
+    items.push({ id: "business_use", name: "Brief note describing the planned use of funds", priority: "Medium",
+      rule: "Because the planned use is described as other", why: "May help connect the requested funding with the business need." });
   if (p.purpose === "refinance" || amount > 1_000_000)
     items.push({ id: "existing_loans", name: "List of existing loans and EMIs", priority: p.purpose === "refinance" ? "High" : "Medium",
       rule: p.purpose === "refinance" ? "Because you want to refinance" : "Because the amount is over ₹10 lakh", why: "Lenders usually review current repayments before adding new ones." });
@@ -104,18 +119,20 @@ export function buildChecklist(p: Profile): ChecklistItem[] {
   return items.sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
 }
 
-export type Status = "ready" | "missing" | "na";
+export type Status = "ready" | "missing" | "help" | "na";
 export type Statuses = Record<string, Status | undefined>;
 
 export function summarize(items: ChecklistItem[], statuses: Statuses) {
   const ready = items.filter((i) => statuses[i.id] === "ready");
   const missing = items.filter((i) => statuses[i.id] === "missing");
+  const help = items.filter((i) => statuses[i.id] === "help");
   const na = items.filter((i) => statuses[i.id] === "na");
   const unmarked = items.filter((i) => !statuses[i.id]);
   const applicable = items.length - na.length;
   const percent = applicable === 0 ? 0 : Math.round((ready.length / applicable) * 100);
-  const nextSteps = [...missing, ...unmarked].sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
-  return { ready, missing, na, unmarked, applicable, percent, nextSteps };
+  const pending = [...missing, ...unmarked].sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
+  const nextSteps = [...pending, ...help].sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
+  return { ready, missing, help, na, unmarked, pending, applicable, percent, nextSteps };
 }
 
 export function labelOf(list: readonly { value: string; label: string }[], v: string) {
