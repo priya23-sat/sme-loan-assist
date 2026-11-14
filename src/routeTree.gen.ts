@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AssistantRouteImport } from './routes/assistant'
+import { Route as BankVisitRouteImport } from './routes/bank-visit'
 import { Route as ChecklistRouteImport } from './routes/checklist'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as EvaluationRouteImport } from './routes/evaluation'
+import { Route as FinanceRouteImport } from './routes/finance'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as TrackerRouteImport } from './routes/tracker'
@@ -26,6 +28,11 @@ const IndexRoute = IndexRouteImport.update({
 const AssistantRoute = AssistantRouteImport.update({
   id: '/assistant',
   path: '/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BankVisitRoute = BankVisitRouteImport.update({
+  id: '/bank-visit',
+  path: '/bank-visit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChecklistRoute = ChecklistRouteImport.update({
@@ -41,6 +48,11 @@ const DocumentsRoute = DocumentsRouteImport.update({
 const EvaluationRoute = EvaluationRouteImport.update({
   id: '/evaluation',
   path: '/evaluation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinanceRoute = FinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -62,9 +74,11 @@ const TrackerRoute = TrackerRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
+  '/bank-visit': typeof BankVisitRoute
   '/checklist': typeof ChecklistRoute
   '/documents': typeof DocumentsRoute
   '/evaluation': typeof EvaluationRoute
+  '/finance': typeof FinanceRoute
   '/profile': typeof ProfileRoute
   '/report': typeof ReportRoute
   '/tracker': typeof TrackerRoute
@@ -72,9 +86,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
+  '/bank-visit': typeof BankVisitRoute
   '/checklist': typeof ChecklistRoute
   '/documents': typeof DocumentsRoute
   '/evaluation': typeof EvaluationRoute
+  '/finance': typeof FinanceRoute
   '/profile': typeof ProfileRoute
   '/report': typeof ReportRoute
   '/tracker': typeof TrackerRoute
@@ -83,9 +99,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
+  '/bank-visit': typeof BankVisitRoute
   '/checklist': typeof ChecklistRoute
   '/documents': typeof DocumentsRoute
   '/evaluation': typeof EvaluationRoute
+  '/finance': typeof FinanceRoute
   '/profile': typeof ProfileRoute
   '/report': typeof ReportRoute
   '/tracker': typeof TrackerRoute
@@ -95,9 +113,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/assistant'
+    | '/bank-visit'
     | '/checklist'
     | '/documents'
     | '/evaluation'
+    | '/finance'
     | '/profile'
     | '/report'
     | '/tracker'
@@ -105,9 +125,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/assistant'
+    | '/bank-visit'
     | '/checklist'
     | '/documents'
     | '/evaluation'
+    | '/finance'
     | '/profile'
     | '/report'
     | '/tracker'
@@ -115,9 +137,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/assistant'
+    | '/bank-visit'
     | '/checklist'
     | '/documents'
     | '/evaluation'
+    | '/finance'
     | '/profile'
     | '/report'
     | '/tracker'
@@ -126,9 +150,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssistantRoute: typeof AssistantRoute
+  BankVisitRoute: typeof BankVisitRoute
   ChecklistRoute: typeof ChecklistRoute
   DocumentsRoute: typeof DocumentsRoute
   EvaluationRoute: typeof EvaluationRoute
+  FinanceRoute: typeof FinanceRoute
   ProfileRoute: typeof ProfileRoute
   ReportRoute: typeof ReportRoute
   TrackerRoute: typeof TrackerRoute
@@ -150,6 +176,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bank-visit': {
+      id: '/bank-visit'
+      path: '/bank-visit'
+      fullPath: '/bank-visit'
+      preLoaderRoute: typeof BankVisitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checklist': {
       id: '/checklist'
       path: '/checklist'
@@ -169,6 +202,13 @@ declare module '@tanstack/react-router' {
       path: '/evaluation'
       fullPath: '/evaluation'
       preLoaderRoute: typeof EvaluationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/finance': {
+      id: '/finance'
+      path: '/finance'
+      fullPath: '/finance'
+      preLoaderRoute: typeof FinanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -198,9 +238,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssistantRoute: AssistantRoute,
+  BankVisitRoute: BankVisitRoute,
   ChecklistRoute: ChecklistRoute,
   DocumentsRoute: DocumentsRoute,
   EvaluationRoute: EvaluationRoute,
+  FinanceRoute: FinanceRoute,
   ProfileRoute: ProfileRoute,
   ReportRoute: ReportRoute,
   TrackerRoute: TrackerRoute,
