@@ -28,6 +28,10 @@ function ProfilePage() {
   const navigate = useNavigate();
   const [form, setForm] = useState<Profile>(EMPTY_PROFILE);
   const [errors, setErrors] = useState<ProfileErrors>({});
+  const localizedOptions = (options: readonly { value: string }[], labels: Record<string, CopyKey>) => options.map(({ value }) => {
+    const key = labels[value];
+    return { value, label: key ? t(key) : value };
+  });
 
   useEffect(() => { if (loaded && profile) setForm(profile); }, [loaded, profile]);
 
@@ -61,10 +65,10 @@ function ProfilePage() {
       </Card>
       <Card>
         <form onSubmit={submit} noValidate className="space-y-4">
-          <Select id="businessType" label={t("businessType")} value={form.businessType} onChange={set("businessType")} options={BUSINESS_TYPES.map(({ value }) => ({ value, label: t(value as CopyKey) }))} error={errors.businessType ? t("errBusiness") : undefined} emptyLabel={t("choose")} />
-          <Select id="years" label={t("businessAge")} value={form.years} onChange={set("years")} options={BUSINESS_AGES.map(({ value }) => ({ value, label: t(({ "0": "ageUnder1", "2": "age1to3", "4": "age3to5", "6": "ageOver5" } as Record<string, CopyKey>)[value]) }))} error={errors.years ? t("errAge") : undefined} emptyLabel={t("choose")} />
-          <Select id="purpose" label={t("loanPurpose")} value={form.purpose} onChange={set("purpose")} options={LOAN_PURPOSES.map(({ value }) => ({ value, label: t(({ expansion: "purposeExpansion", equipment: "purposeEquipment", working_capital: "purposeWorking", stock: "purposeStock", other: "purposeOther" } as Record<string, CopyKey>)[value]) }))} error={errors.purpose ? t("errPurpose") : undefined} emptyLabel={t("choose")} />
-          <Select id="turnover" label={t("turnover")} value={form.turnover} onChange={set("turnover")} options={TURNOVER_RANGES.map(({ value }) => ({ value, label: t(({ lt10: "turnoverLt10", "10to40": "turnover10to40", "40to100": "turnover40to100", gt100: "turnoverGt100" } as Record<string, CopyKey>)[value]) }))} error={errors.turnover ? t("errTurnover") : undefined} emptyLabel={t("choose")} />
+          <Select id="businessType" label={t("businessType")} value={form.businessType} onChange={set("businessType")} options={localizedOptions(BUSINESS_TYPES, { food: "food", grocery: "grocery", retail: "retail", manufacturing: "manufacturing", trading: "trading", transport: "transport", other: "other" })} error={errors.businessType ? t("errBusiness") : undefined} emptyLabel={t("choose")} />
+          <Select id="years" label={t("businessAge")} value={form.years} onChange={set("years")} options={localizedOptions(BUSINESS_AGES, { "0": "ageUnder1", "2": "age1to3", "4": "age3to5", "6": "ageOver5" })} error={errors.years ? t("errAge") : undefined} emptyLabel={t("choose")} />
+          <Select id="purpose" label={t("loanPurpose")} value={form.purpose} onChange={set("purpose")} options={localizedOptions(LOAN_PURPOSES, { expansion: "purposeExpansion", equipment: "purposeEquipment", working_capital: "purposeWorking", stock: "purposeStock", other: "purposeOther" })} error={errors.purpose ? t("errPurpose") : undefined} emptyLabel={t("choose")} />
+          <Select id="turnover" label={t("turnover")} value={form.turnover} onChange={set("turnover")} options={localizedOptions(TURNOVER_RANGES, { lt10: "turnoverLt10", "10to40": "turnover10to40", "40to100": "turnover40to100", gt100: "turnoverGt100" })} error={errors.turnover ? t("errTurnover") : undefined} emptyLabel={t("choose")} />
           <Field id="amount" label={t("amount")} error={errors.amount ? t("errAmount") : undefined} hint={t("amountHint")}>
             <input id="f-amount" inputMode="numeric" value={form.amount} onChange={set("amount")} placeholder={language === "mr" ? "उदा. ८०००००" : "e.g. 800000"} className={inputCls(errors.amount)} aria-invalid={!!errors.amount} aria-describedby={errors.amount ? "e-amount" : undefined} />
           </Field>
