@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as BankVisitRouteImport } from './routes/bank-visit'
 import { Route as ChecklistRouteImport } from './routes/checklist'
@@ -19,6 +20,11 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ReportRouteImport } from './routes/report'
 import { Route as TrackerRouteImport } from './routes/tracker'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AssistantRoute = AssistantRouteImport.update({
   id: '/assistant',
   path: '/assistant',
@@ -66,6 +72,7 @@ const TrackerRoute = TrackerRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/bank-visit': typeof BankVisitRoute
   '/checklist': typeof ChecklistRoute
@@ -77,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/tracker': typeof TrackerRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/bank-visit': typeof BankVisitRoute
   '/checklist': typeof ChecklistRoute
@@ -89,6 +97,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/bank-visit': typeof BankVisitRoute
   '/checklist': typeof ChecklistRoute
@@ -102,6 +111,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/assistant'
     | '/bank-visit'
     | '/checklist'
@@ -113,6 +123,7 @@ export interface FileRouteTypes {
     | '/tracker'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/assistant'
     | '/bank-visit'
     | '/checklist'
@@ -124,6 +135,7 @@ export interface FileRouteTypes {
     | '/tracker'
   id:
     | '__root__'
+    | '/'
     | '/assistant'
     | '/bank-visit'
     | '/checklist'
@@ -136,6 +148,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   AssistantRoute: typeof AssistantRoute
   BankVisitRoute: typeof BankVisitRoute
   ChecklistRoute: typeof ChecklistRoute
@@ -149,6 +162,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/assistant': {
       id: '/assistant'
       path: '/assistant'
@@ -216,6 +236,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   AssistantRoute: AssistantRoute,
   BankVisitRoute: BankVisitRoute,
   ChecklistRoute: ChecklistRoute,
