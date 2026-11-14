@@ -118,6 +118,11 @@ export function useLanguage() {
   return value;
 }
 
+const FALLBACK_ITEM = {
+  en: { name: "Business document", why: "A lender may ask for information about your business.", prepare: "Ask the lender what information they need." },
+  mr: { name: "व्यवसायाचे कागदपत्र", why: "कर्जदाता व्यवसायाबद्दल माहिती विचारू शकतो.", prepare: "कर्जदात्याला कोणती माहिती हवी ते विचारा." },
+};
+
 export const ITEM_COPY: Record<string, { en: { name: string; why: string; prepare: string }; mr: { name: string; why: string; prepare: string } }> = {
   registration: { en: { name: "Business registration or shop licence", why: "May help show that the business operates as described.", prepare: "A copy of a business registration, Udyam certificate, or shop licence if available." }, mr: { name: "व्यवसाय नोंदणी किंवा दुकान परवाना", why: "व्यवसाय दिलेल्या माहितीनुसार चालतो हे दाखवण्यास मदत होऊ शकते.", prepare: "उपलब्ध असल्यास व्यवसाय नोंदणी, उद्यम प्रमाणपत्र किंवा दुकान परवान्याची प्रत." } },
   vehicle_rc: { en: { name: "Vehicle registration certificates (RC)", why: "May describe the vehicles used in the transport business.", prepare: "Vehicle registration certificates for vehicles used by the business." }, mr: { name: "वाहन नोंदणी प्रमाणपत्रे (RC)", why: "वाहतूक व्यवसायात वापरल्या जाणाऱ्या वाहनांची माहिती देऊ शकतात.", prepare: "व्यवसायातील वाहनांची नोंदणी प्रमाणपत्रे." } },
@@ -136,5 +141,5 @@ export const ITEM_COPY: Record<string, { en: { name: string; why: string; prepar
 };
 
 export function localizedItem(id: string, language: Language) {
-  return ITEM_COPY[id]?.[language] ?? ITEM_COPY.business_use[language];
+  return ITEM_COPY[id]?.[language] ?? FALLBACK_ITEM[language];
 }
