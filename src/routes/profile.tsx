@@ -4,15 +4,16 @@ import { Truck } from "lucide-react";
 import { Card } from "@/components/shell";
 import { StepBar } from "@/components/journey";
 import { useReadiness } from "@/lib/readiness-state";
-import { BUSINESS_TYPES, EMPTY_PROFILE, LOAN_PURPOSES, TURNOVER_RANGES, validateProfile, type Profile, type ProfileErrors } from "@/lib/readiness";
+import { BUSINESS_AGES, BUSINESS_TYPES, EMPTY_PROFILE, LOAN_PURPOSES, TURNOVER_RANGES, validateProfile, type Profile, type ProfileErrors } from "@/lib/readiness";
+import { useLanguage, text, type CopyKey } from "@/lib/language";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
-      { title: "Business Profile — SME Loan Ready" },
-      { name: "description", content: "Tell us about your transport business to get a personalised loan document checklist." },
-      { property: "og:title", content: "Business Profile — SME Loan Ready" },
-      { property: "og:description", content: "Step 1: describe your transport business and loan need." },
+      { title: "Business Details — SME Loan Ready" },
+      { name: "description", content: "Share basic business details to prepare a sample small-business loan document checklist." },
+      { property: "og:title", content: "Business Details — SME Loan Ready" },
+      { property: "og:description", content: "Share basic business details and explore a sample preparation list." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -21,6 +22,8 @@ export const Route = createFileRoute("/profile")({
 });
 
 function ProfilePage() {
+  const { language } = useLanguage();
+  const t = (key: CopyKey) => text(language, key);
   const { loaded, profile, saveProfile } = useReadiness();
   const navigate = useNavigate();
   const [form, setForm] = useState<Profile>(EMPTY_PROFILE);
@@ -49,28 +52,24 @@ function ProfilePage() {
     <div className="space-y-6">
       <StepBar current={0} />
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-semibold"><Truck className="h-6 w-6 text-primary" /> Business profile</h1>
-        <p className="mt-1 text-sm text-muted-foreground">For small transport businesses preparing to approach a bank or lender. No personal or ID details are needed. Your answers stay in this browser.</p>
+        <h1 className="flex items-center gap-2 text-2xl font-semibold"><Truck className="h-6 w-6 text-primary" /> {t("profileTitle")}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{t("profileSubtitle")}</p>
       </div>
       <Card className="border-primary/20 bg-tint">
-        <h2 className="font-semibold">What should I do here?</h2>
-        <p className="mt-1 text-sm leading-6 text-muted-foreground">
-          Enter basic details about your business and why you need the loan. This helps create a more relevant document checklist. Use approximate figures if needed, and do not enter PAN, Aadhaar, bank account numbers, or other sensitive details.
-        </p>
+        <h2 className="font-semibold">{t("profileHelpTitle")}</h2>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">{t("profileHelp")}</p>
       </Card>
       <Card>
         <form onSubmit={submit} noValidate className="space-y-4">
-          <Select id="businessType" label="Business type" value={form.businessType} onChange={set("businessType")} options={BUSINESS_TYPES} error={errors.businessType} />
-          <Field id="years" label="Years in operation" error={errors.years}>
-            <input id="f-years" inputMode="numeric" value={form.years} onChange={set("years")} placeholder="e.g. 4" className={inputCls(errors.years)} aria-invalid={!!errors.years} aria-describedby={errors.years ? "e-years" : undefined} />
-          </Field>
-          <Select id="purpose" label="Loan purpose" value={form.purpose} onChange={set("purpose")} options={LOAN_PURPOSES} error={errors.purpose} />
-          <Select id="turnover" label="Approximate yearly turnover" value={form.turnover} onChange={set("turnover")} options={TURNOVER_RANGES} error={errors.turnover} />
-          <Field id="amount" label="Requested loan amount (₹)" error={errors.amount} hint="Between ₹50,000 and ₹5 crore">
-            <input id="f-amount" inputMode="numeric" value={form.amount} onChange={set("amount")} placeholder="e.g. 800000" className={inputCls(errors.amount)} aria-invalid={!!errors.amount} aria-describedby={errors.amount ? "e-amount" : undefined} />
+          <Select id="businessType" label={t("businessType")} value={form.businessType} onChange={set("businessType")} options={BUSINESS_TYPES.map(({ value }) => ({ value, label: t(value as CopyKey) }))} error={errors.businessType ? t("errBusiness") : undefined} emptyLabel={t("choose")} />
+          <Select id="years" label={t("businessAge")} value={form.years} onChange={set("years")} options={BUSINESS_AGES.map(({ value }) => ({ value, label: t(({ "0": "ageUnder1", "2": "age1to3", "4": "age3to5", "6": "ageOver5" } as Record<string, CopyKey>)[value]) }))} error={errors.years ? t("errAge") : undefined} emptyLabel={t("choose")} />
+          <Select id="purpose" label={t("loanPurpose")} value={form.purpose} onChange={set("purpose")} options={LOAN_PURPOSES.map(({ value }) => ({ value, label: t(({ expansion: "purposeExpansion", equipment: "purposeEquipment", working_capital: "purposeWorking", stock: "purposeStock", other: "purposeOther" } as Record<string, CopyKey>)[value]) }))} error={errors.purpose ? t("errPurpose") : undefined} emptyLabel={t("choose")} />
+          <Select id="turnover" label={t("turnover")} value={form.turnover} onChange={set("turnover")} options={TURNOVER_RANGES.map(({ value }) => ({ value, label: t(({ lt10: "turnoverLt10", "10to40": "turnover10to40", "40to100": "turnover40to100", gt100: "turnoverGt100" } as Record<string, CopyKey>)[value]) }))} error={errors.turnover ? t("errTurnover") : undefined} emptyLabel={t("choose")} />
+          <Field id="amount" label={t("amount")} error={errors.amount ? t("errAmount") : undefined} hint={t("amountHint")}>
+            <input id="f-amount" inputMode="numeric" value={form.amount} onChange={set("amount")} placeholder={language === "mr" ? "उदा. ८०००००" : "e.g. 800000"} className={inputCls(errors.amount)} aria-invalid={!!errors.amount} aria-describedby={errors.amount ? "e-amount" : undefined} />
           </Field>
           <button type="submit" className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90 sm:w-auto">
-            {profile ? "Update and view checklist" : "Build my checklist"}
+            {profile ? t("profileUpdate") : t("profileContinue")}
           </button>
         </form>
       </Card>
@@ -94,12 +93,14 @@ function Field({ id, label, error, hint, children }: { id: string; label: string
 
 function Select({ id, label, value, onChange, options, error }: {
   id: string; label: string; value: string; error?: string | undefined;
+  emptyLabel?: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void; options: readonly { value: string; label: string }[];
 }) {
+  const { language } = useLanguage();
   return (
     <Field id={id} label={label} error={error}>
       <select id={`f-${id}`} value={value} onChange={onChange} className={inputCls(error)} aria-invalid={!!error} aria-describedby={error ? `e-${id}` : undefined}>
-        <option value="">Select…</option>
+        <option value="">{arguments[0]?.emptyLabel ?? text(language, "choose")}</option>
         {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </Field>
