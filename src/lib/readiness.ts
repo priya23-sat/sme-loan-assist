@@ -118,6 +118,24 @@ export function buildChecklist(p: Profile): ChecklistItem[] {
       rule: p.purpose === "refinance" ? "Because you want to refinance" : "Because the amount is over ₹10 lakh", why: "Lenders usually review current repayments before adding new ones." });
   items.push({ id: "photos", name: "Recent photos of vehicles and business premises", priority: "Low",
     rule: "Optional but helpful", why: "Can make the application easier to understand for the lender." });
+  items.push(
+    { id: "pan", name: "PAN card of proprietor / entity", priority: "High", rule: "P1 · Identity and entity KYC", why: "May help the lender establish the applicant or entity identity." },
+    { id: "identity", name: "Identity proof of proprietor / partners / directors", priority: "High", rule: "P1 · Applicant KYC", why: "The lender may request identity documents for relevant owners or authorised persons." },
+    { id: "address", name: "Residential and business address proof", priority: "High", rule: "P1 · Address verification", why: "May help verify the applicant and operating business address." },
+    { id: "bank_statement", name: "Business bank statements (usually 6–12 months)", priority: "High", rule: "P2 · Cash-flow assessment", why: "Helps the lender review business receipts, payments and account conduct." },
+    { id: "itr", name: "Income-tax returns (typically 2–3 years, if filed)", priority: "High", rule: "P2 · Financial assessment", why: "May help assess declared income and the business's financial track record." },
+    { id: "balance_sheet", name: "Balance sheet and profit & loss statements", priority: "High", rule: "P2 · Financial assessment", why: "Helps explain assets, liabilities, income and expenses." },
+    { id: "existing_facilities", name: "Existing loan sanction letters and repayment schedules", priority: "Medium", rule: "P2 · Existing obligations", why: "Helps the lender understand current borrowing and repayment commitments." },
+    { id: "gst_returns", name: "Recent GST returns (if GST-registered)", priority: "Medium", rule: "P2 · Tax and sales records", why: "May help reconcile reported turnover with business activity." },
+    { id: "udyam", name: "Udyam registration certificate (if registered)", priority: "Medium", rule: "P1 · Optional MSME registration evidence", why: "Can support the business's MSME registration details where applicable." },
+    { id: "entity_deed", name: "Partnership deed / LLP agreement / MOA and AOA, as applicable", priority: "Medium", rule: "P1 · Entity constitution", why: "The lender may request constitution documents based on the legal structure." },
+    { id: "shop_licence", name: "Shop and Establishment / trade licence, if applicable", priority: "Medium", rule: "P3 · Business operations", why: "May support the operating address and nature of the business." },
+    { id: "stock", name: "Latest stock statement and inventory summary", priority: "Medium", rule: "P3 · Trading and working-capital businesses", why: "May help explain inventory levels and working-capital requirements." },
+    { id: "debtors_creditors", name: "Debtors and creditors ageing / outstanding list", priority: "Medium", rule: "P3 · Trading and working-capital businesses", why: "May help assess collections, supplier dues and operating cycle." },
+    { id: "premises", name: "Business premises ownership proof or rent agreement", priority: "Medium", rule: "P3 · Business premises", why: "May help verify the place from which the business operates." },
+    { id: "collateral", name: "Collateral property title and ownership documents, if offered", priority: "Low", rule: "P4 · Only if collateral is proposed", why: "Property documents may be requested when a secured facility is being considered." },
+    { id: "guarantor", name: "Guarantor KYC and financial documents, if required", priority: "Low", rule: "P4 · Only if lender requires a guarantor", why: "A lender may request these documents depending on the proposed facility." },
+  );
   return items.sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]);
 }
 
