@@ -45,17 +45,19 @@ export async function saveDocument(checklistId: string, file: File): Promise<Sto
   const session = await getSupabaseSession();
   if (!session) throw new Error("Sign in to upload documents.");
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-100) || "document";
+  const extension = file.name.split(".").pop()?.toLowerCase();
+  const mimeType = file.type || (extension === "pdf" ? "application/pdf" : extension === "jpg" || extension === "jpeg" ? "image/jpeg" : "image/png");
   const storagePath = `${session.user.id}/${crypto.randomUUID()}/${safeName}`;
   const upload = await authenticatedFetch(`/storage/v1/object/${BUCKET}/${encodePath(storagePath)}`, {
     method: "POST",
-    headers: { "Content-Type": file.type || "application/octet-stream", "x-upsert": "false" },
+    headers: { "Content-Type": mimeType, "x-upsert": "false" },
     body: file,
   });
   await responseError(upload);
   const metadata = await authenticatedFetch("/rest/v1/loan_documents", {
     method: "POST",
     headers: { "Content-Type": "application/json", Prefer: "return=representation" },
-    body: JSON.stringify({ owner_id: session.user.id, checklist_id: checklistId, file_name: file.name, mime_type: file.type || "application/octet-stream", size_bytes: file.size, storage_path: storagePath }),
+    body: JSON.stringify({ owner_id: session.user.id, checklist_id: checklistId, file_name: file.name, mime_type: mimeType, size_bytes: file.size, storage_path: storagePath }),
   });
   try { await responseError(metadata); }
   catch (error) {
