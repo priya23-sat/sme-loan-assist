@@ -1,3 +1,5 @@
+import { authenticatedFetch, getSupabaseSession } from "./supabase";
+
 export type StoredDocument = {
   id: string;
   checklistId: string;
@@ -5,26 +7,15 @@ export type StoredDocument = {
   mimeType: string;
   size: number;
   uploadedAt: string;
-  blob: Blob;
+  storagePath: string;
 };
 
-const DB_NAME = "sme-loan-buddy-documents";
-const STORE_NAME = "documents";
-const DB_VERSION = 1;
+const BUCKET = "sme-loan-documents";
 export const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024;
 export const ACCEPTED_DOCUMENT_TYPES = ["application/pdf", "image/jpeg", "image/png"];
 
-function openDatabase(): Promise<IDBDatabase> {
-  if (typeof indexedDB === "undefined") return Promise.reject(new Error("Document storage is unavailable in this browser."));
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = () => {
-      const db = request.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME, { keyPath: "id" });
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error ?? new Error("Could not open document storage."));
-  });
+function encodePath(path: string) {
+  return path.split("/").map(encodeURIComponent).join("/");
 }
 
 export function validateDocument(file: File): string | null {
@@ -37,48 +28,60 @@ export function validateDocument(file: File): string | null {
   return null;
 }
 
+async function responseError(response: Response) {
+  if (response.ok) return;
+  const body = await response.json().catch(() => ({}));
+  throw new Error(String(body.message || body.error || body.msg || "Document service request failed."));
+}
+
+type DocumentRow = { id: string; checklist_id: string; file_name: string; mime_type: string; size_bytes: number; storage_path: string; created_at: string };
+function fromRow(row: DocumentRow): StoredDocument {
+  return { id: row.id, checklistId: row.checklist_id, name: row.file_name, mimeType: row.mime_type, size: row.size_bytes, storagePath: row.storage_path, uploadedAt: row.created_at };
+}
+
 export async function saveDocument(checklistId: string, file: File): Promise<StoredDocument> {
   const issue = validateDocument(file);
   if (issue) throw new Error(issue);
-  const record: StoredDocument = {
-    id: crypto.randomUUID(),
-    checklistId,
-    name: file.name,
-    mimeType: file.type || "application/octet-stream",
-    size: file.size,
-    uploadedAt: new Date().toISOString(),
-    blob: file,
-  };
-  const db = await openDatabase();
-  await new Promise<void>((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).put(record);
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error ?? new Error("Could not save this document."));
-    tx.onabort = () => reject(tx.error ?? new Error("Document save was cancelled."));
+  const session = await getSupabaseSession();
+  if (!session) throw new Error("Sign in to upload documents.");
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-100) || "document";
+  const storagePath = `${session.user.id}/${crypto.randomUUID()}/${safeName}`;
+  const upload = await authenticatedFetch(`/storage/v1/object/${BUCKET}/${encodePath(storagePath)}`, {
+    method: "POST",
+    headers: { "Content-Type": file.type || "application/octet-stream", "x-upsert": "false" },
+    body: file,
   });
-  db.close();
-  return record;
+  await responseError(upload);
+  const metadata = await authenticatedFetch("/rest/v1/loan_documents", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Prefer: "return=representation" },
+    body: JSON.stringify({ owner_id: session.user.id, checklist_id: checklistId, file_name: file.name, mime_type: file.type || "application/octet-stream", size_bytes: file.size, storage_path: storagePath }),
+  });
+  try { await responseError(metadata); }
+  catch (error) {
+    await authenticatedFetch(`/storage/v1/object/${BUCKET}`, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prefixes: [storagePath] }) }).catch(() => undefined);
+    throw error;
+  }
+  const rows = await metadata.json() as DocumentRow[];
+  if (!rows[0]) throw new Error("The file was uploaded but its document record was not returned.");
+  return fromRow(rows[0]);
 }
 
 export async function listDocuments(): Promise<StoredDocument[]> {
-  const db = await openDatabase();
-  const records = await new Promise<StoredDocument[]>((resolve, reject) => {
-    const request = db.transaction(STORE_NAME, "readonly").objectStore(STORE_NAME).getAll();
-    request.onsuccess = () => resolve(request.result as StoredDocument[]);
-    request.onerror = () => reject(request.error ?? new Error("Could not read saved documents."));
-  });
-  db.close();
-  return records.sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
+  const response = await authenticatedFetch("/rest/v1/loan_documents?select=id,checklist_id,file_name,mime_type,size_bytes,storage_path,created_at&order=created_at.desc");
+  await responseError(response);
+  return (await response.json() as DocumentRow[]).map(fromRow);
 }
 
-export async function removeDocument(id: string): Promise<void> {
-  const db = await openDatabase();
-  await new Promise<void>((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    tx.objectStore(STORE_NAME).delete(id);
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error ?? new Error("Could not delete this document."));
-  });
-  db.close();
+export async function downloadDocument(doc: StoredDocument): Promise<Blob> {
+  const response = await authenticatedFetch(`/storage/v1/object/${BUCKET}/${encodePath(doc.storagePath)}`);
+  await responseError(response);
+  return response.blob();
+}
+
+export async function removeDocument(doc: StoredDocument): Promise<void> {
+  const metadata = await authenticatedFetch(`/rest/v1/loan_documents?id=eq.${encodeURIComponent(doc.id)}`, { method: "DELETE" });
+  await responseError(metadata);
+  const storage = await authenticatedFetch(`/storage/v1/object/${BUCKET}`, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prefixes: [doc.storagePath] }) });
+  await responseError(storage);
 }
