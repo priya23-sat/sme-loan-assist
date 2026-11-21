@@ -20,9 +20,14 @@ describe("profile validation", () => {
 
 describe("checklist rules", () => {
   const ids = (p: Profile) => buildChecklist(p).map((i) => i.id);
-  it("never asks for sensitive documents like Aadhaar, PAN or bank statements", () => {
-    const names = buildChecklist({ ...base, purpose: "refinance", turnover: "gt100", amount: "5000000" }).map((i) => i.name.toLowerCase()).join(" ");
-    expect(names).not.toMatch(/aadhaar|pan card|\bpan\b|bank statement/);
+  it("includes core KYC and banking documents in the priority checklist", () => {
+    const items = buildChecklist({ ...base, purpose: "refinance", turnover: "gt100", amount: "5000000" });
+    const ids = items.map((i) => i.id);
+    expect(ids).toContain("pan");
+    expect(ids).toContain("identity");
+    expect(ids).toContain("bank_statement");
+    expect(items.find((i) => i.id === "pan")?.priority).toBe("High");
+    expect(items.find((i) => i.id === "bank_statement")?.priority).toBe("High");
   });
   it("adds GST only for turnover of ₹40 lakh or more", () => {
     expect(ids(base)).not.toContain("gst");

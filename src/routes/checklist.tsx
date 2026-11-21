@@ -54,7 +54,8 @@ function ChecklistPage() {
           </ul>
         </Card>
         <div className="flex flex-col gap-2 sm:flex-row">
-          <Link to="/tracker" className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90">Track my documents <ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/documents" className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90">Upload real documents <ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/tracker" className="inline-flex items-center justify-center gap-2 rounded-md border px-4 py-2.5 text-sm hover:bg-tint">Track preparation status</Link>
           <Link to="/profile" className="inline-flex items-center justify-center rounded-md border px-4 py-2.5 text-sm hover:bg-tint">Edit profile</Link>
         </div>
       </NeedsProfile>
