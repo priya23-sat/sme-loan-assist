@@ -46,6 +46,18 @@ The existing `loan_documents` record remains the source of truth for the origina
 - Provide deletion that removes derived analysis rows and respects the original document lifecycle.
 - Preserve source page/row provenance so every extracted field can be checked against the PDF.
 
+## First bank format: Bank of India (BOI)
+
+The first adapter key is `boi_retail_sme_v1`. It is a deliberately narrow, BOI-inspired synthetic layout for the first parser iteration; it is not a claim of compatibility with every Bank of India channel, account type or statement export.
+
+- Text parser: `src/lib/boi-statement-parser.ts`
+- Parser tests: `src/lib/boi-statement-parser.test.ts`
+- Plain-text golden fixture: `fixtures/bank-statements/boi-v1-synthetic.txt`
+- Expected summary: `fixtures/bank-statements/boi-v1-expected.json`
+- Companion PDFs: selectable-text and image-only scanned versions are generated as local test artifacts for this iteration.
+- Amount arithmetic uses integer paise internally; output amounts are decimal strings to avoid floating-point rounding.
+- Unrecognised transaction rows and running-balance mismatches are surfaced as warnings; the parser does not silently repair them.
+
 ## Reconciliation and review rules
 
 - Validate opening balance + credits - debits against closing balance when the statement's convention and coverage make this calculation valid.
@@ -79,7 +91,7 @@ These are targets to measure on synthetic fixtures, not claimed results:
 - [x] Initial database migration committed to the 2.1 branch.
 - [x] Initial GitHub development issues created.
 - [ ] Migration reviewed and applied to a development Supabase environment.
-- [ ] Extraction contract, synthetic fixtures and parser implemented.
+- [x] Initial BOI-inspired extraction parser, parser tests, plain-text fixture and expected summary committed.\n- [ ] PDF text-extraction/OCR adapters wired into the authenticated processing flow.\n- [ ] BOI parser validated against a published or safely anonymised statement layout; current fixture is synthetic and illustrative.
 - [ ] OCR provider evaluated and selected.
 - [ ] End-to-end preview tested.
 
