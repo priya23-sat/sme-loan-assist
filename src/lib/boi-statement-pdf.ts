@@ -124,7 +124,9 @@ export async function processBoiStatementPdf(
 
   const periodFrom = pageResults.find((result) => result.statementPeriod.from !== null)?.statementPeriod.from ?? null;
   const periodTo = [...pageResults].reverse().find((result) => result.statementPeriod.to !== null)?.statementPeriod.to ?? null;
-  const warnings = pageResults.flatMap((result) => result.warnings);
+  const warnings = pageResults.flatMap((result) => result.warnings).filter((warning) =>
+    warning !== "Statement period was not recognised." || (periodFrom === null && periodTo === null),
+  );
   if (reconciliation === "mismatch") {
     warnings.push("Closing balance does not reconcile with opening balance and extracted transactions.");
   }
