@@ -16,6 +16,8 @@ create index if not exists loan_documents_owner_created_idx
   on public.loan_documents (owner_id, created_at desc);
 
 alter table public.loan_documents enable row level security;
+revoke all on public.loan_documents from anon;
+grant select, insert, delete on public.loan_documents to authenticated;
 
 drop policy if exists "Borrowers read their own document records" on public.loan_documents;
 create policy "Borrowers read their own document records"
