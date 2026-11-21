@@ -20,6 +20,7 @@ const PRIORITY_LABEL: Record<string, { en: string; mr: string }> = {
 function Documents() {
   const { items, profile, setStatus } = useReadiness();
   const { language } = useLanguage();
+  const mr = language === "mr";
   const [documents, setDocuments] = useState<StoredDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
