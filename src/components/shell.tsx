@@ -9,6 +9,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const t = (key: Parameters<typeof text>[1]) => text(language, key);
   const nav = [
     { to: "/profile" as const, label: t("navProfile") },
+    { to: "/documents" as const, label: language === "mr" ? "कागदपत्रे" : "Documents" },
     { to: "/checklist" as const, label: t("navChecklist") },
     { to: "/bank-visit" as const, label: t("navVisit") },
     { to: "/finance" as const, label: t("navFinance") },
