@@ -1,0 +1,16 @@
+{
+  "bankFormatKey": "boi_retail_sme_v1",
+  "currency": "INR",
+  "statementPeriod": {
+    "from": "2026-04-01",
+    "to": "2026-04-30"
+  },
+  "openingBalance": "125000.00",
+  "closingBalance": "150500.00",
+  "transactionCount": 5,
+  "reconciliation": {
+    "status": "matched",
+    "expectedClosingBalance": "150500.00",
+    "delta": "0.00"
+  }
+}
